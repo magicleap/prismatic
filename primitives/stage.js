@@ -27,13 +27,13 @@ export class MlStage extends HTMLElement {
     /**
      * Requested Stage.
      */
-    this.requestStageExtends();
+    this.requestStageExtents();
   }
 
   /**
    * Request Stage extents.
    */
-  requestStageExtends() {
+  requestStageExtents() {
     /**
      * If no extents attribute.
      */
@@ -45,7 +45,7 @@ export class MlStage extends HTMLElement {
     /**
      * Default extent values to 0.
      */
-    let stageExtends = {top:0, right:0, bottom:0, left:0, front:0, back:0};
+    let stageExtents = {top:0, right:0, bottom:0, left:0, front:0, back:0};
 
     let extentValueArr = this.getAttribute('extents').toLowerCase().split(/;/);
 
@@ -63,7 +63,7 @@ export class MlStage extends HTMLElement {
         let extentPropValue = extentProp[1].trim();
 
         //TODO: we need to validate values >0 and the measure units in meters, pixels, cm %
-        stageExtends[extentPropName] = parseFloat(extentPropValue.replace(/\r?\n| |\r|\t|,/gm, ''));
+        stageExtents[extentPropName] = parseFloat(extentPropValue.replace(/\r?\n| |\r|\t|,/gm, ''));
       }
     });
 
@@ -76,7 +76,7 @@ export class MlStage extends HTMLElement {
     /**
      * Prepare MLStageExtent with extents values.
      */
-    var stageExt = new MLStageExtent(stageExtends.top, stageExtends.right, stageExtends.bottom, stageExtends.left, stageExtends.front, stageExtends.back);
+    var stageExt = new MLStageExtent(stageExtents.top, stageExtents.right, stageExtents.bottom, stageExtents.left, stageExtents.front, stageExtents.back);
 
     /**
      * Request stage size and position.
