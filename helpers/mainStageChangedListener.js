@@ -16,7 +16,7 @@ let mainStageChangedListener = () => {
      * Set new position of JS volume.
      */
     const viewPortPositionTopLeftY = window.mlWorld.viewportHeight/2 + window.mlWorld.viewPortPositionTopLeft.y;
-    const transformMatrix = new DOMMatrix().translate((window.mlWorld.stageExtension.right - window.mlWorld.stageExtension.left)/2, viewPortPositionTopLeftY + (window.mlWorld.stageExtension.top - window.mlWorld.stageExtension.bottom)/2, (window.mlWorld.stageExtension.front - window.mlWorld.stageExtension.back)/2);
+    const transformMatrix = new DOMMatrix().translate((window.mlWorld.stageExtent.right - window.mlWorld.stageExtent.left)/2, viewPortPositionTopLeftY + (window.mlWorld.stageExtent.top - window.mlWorld.stageExtent.bottom)/2, (window.mlWorld.stageExtent.front - window.mlWorld.stageExtent.back)/2);
     volume.transformVolumeRelativeToHostVolume(transformMatrix);
 
     /**

@@ -165,7 +165,6 @@ export class MlQuad extends HTMLElement {
    */
   static get observedAttributes() {
     return ['extractable',
-            'scrollable',
             'scale-scroll',
             'breadth',
             'color',
@@ -251,17 +250,6 @@ export class MlQuad extends HTMLElement {
   set extractable(v) {
     if (this.getAttribute('extractable') === v.toString()) return;
     this.setAttribute('extractable', v.toString());
-  }
-
-  /**
-   * scrollable: Element's Property.
-   */
-  get scrollable() {
-    return (this.hasAttribute('scrollable') && (this.getAttribute('scrollable') === '' || this.getAttribute('scrollable') === 'true'));
-  }
-  set scrollable(v) {
-    if (this.getAttribute('scrollable') === v.toString()) return;
-    this.setAttribute('scrollable', v.toString());
   }
 
   /**

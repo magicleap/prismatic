@@ -1,0 +1,6 @@
+{
+  "name": "Prismatic",
+  "description": "A declarative JS library for creating 3D content for Magic Leap's Helio browser",
+  "author": "Magic Leap Inc.",
+  "version": "2.0.0-github.0",
+}

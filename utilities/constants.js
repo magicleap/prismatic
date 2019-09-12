@@ -12,9 +12,6 @@ export const DEFULT_Z_OFFSET = 150;
 /** De facto standard: 1 pixel = 0.0264583 cm (1in = 96px = 2.54cm) */
 export const PIXEL_TO_CM = 0.026458333;
 
-/** Ratio used to create a small gab between volume and node. Make the volume slightly bigger than node. */
-export const VOLUME_GAP_RATIO = 1.001;
-
 /** Ratio used for hover mouseover effect to increase the size of the node on mouse over an extractable node.  */
 export const MOUSE_OVER_RATIO = 1.25;
 

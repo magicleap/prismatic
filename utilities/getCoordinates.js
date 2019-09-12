@@ -15,17 +15,17 @@ let getCoordinates = (el) => {
   /**
    * Distance from left to center of element.
    */
-  let positionX = getXCoordinate(position.left + (el.clientWidth/2)) + (window.mlWorld.stageExtension.left - window.mlWorld.stageExtension.right)/2;
+  let positionX = getXCoordinate(position.left + (el.clientWidth/2)) + (window.mlWorld.stageExtent.left - window.mlWorld.stageExtent.right)/2;
 
   /**
    * Distance from top to center of element.
    */
-  let positionY = getYCoordinate(position.top + (el.clientHeight/2)) + (window.mlWorld.stageExtension.bottom - window.mlWorld.stageExtension.top)/2;
+  let positionY = getYCoordinate(position.top + (el.clientHeight/2)) + (window.mlWorld.stageExtent.bottom - window.mlWorld.stageExtent.top)/2;
 
   /**
    * Distance of element on Z axes (forward or backward).
    */
-  let positionZ = getZCoordinate(el.zOffset) + (window.mlWorld.stageExtension.back - window.mlWorld.stageExtension.front)/2;
+  let positionZ = getZCoordinate(el.zOffset) + (window.mlWorld.stageExtent.back - window.mlWorld.stageExtent.front)/2;
 
   return {
     positionX,

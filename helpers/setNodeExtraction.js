@@ -1,7 +1,6 @@
 /**
  * @module helpers/setNodeExtraction
  */
-import { VOLUME_GAP_RATIO } from '../utilities/constants.js';
 import { getHTMLElementSize } from '../utilities/getHTMLElementSize.js';
 
 /**
@@ -248,6 +247,11 @@ let doExtraction = (el, transformMatrix, eSize) => {
   }
 
   /**
+   * Make the extracted volume size the largest of width, height and breadth.
+   */
+  let extractedVolumeSize = Math.max(eSize.width, eSize.height, eSize.breadth);
+
+  /**
    * Extract content with dictionary manifest
    */
   el._mainTransform.extractContent({
@@ -255,9 +259,9 @@ let doExtraction = (el, transformMatrix, eSize) => {
     transform: transformMatrix,
     doIt: "auto",
     origin_url: path,
-    width: eSize.width * VOLUME_GAP_RATIO,
-    height: eSize.height * VOLUME_GAP_RATIO,
-    breadth: eSize.breadth * VOLUME_GAP_RATIO
+    width: extractedVolumeSize,
+    height: extractedVolumeSize,
+    breadth: extractedVolumeSize
   });
 
   /**

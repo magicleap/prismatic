@@ -31,39 +31,39 @@ export class MlStage extends HTMLElement {
   }
 
   /**
-   * Request Stage extends.
+   * Request Stage extents.
    */
   requestStageExtends() {
     /**
-     * If no extends attribute.
+     * If no extents attribute.
      */
-    if (!this.hasAttribute('extends')) {
-      console.warn(`No stage extends attribute provided.`);
+    if (!this.hasAttribute('extents')) {
+      console.warn(`No stage extents attribute provided.`);
       return;
     }
 
     /**
-     * Default extend values to 0.
+     * Default extent values to 0.
      */
     let stageExtends = {top:0, right:0, bottom:0, left:0, front:0, back:0};
 
-    let extendValueArr = this.getAttribute('extends').toLowerCase().split(/;/);
+    let extentValueArr = this.getAttribute('extents').toLowerCase().split(/;/);
 
-    extendValueArr.forEach(extendValue => {
+    extentValueArr.forEach(extentValue => {
       /**
        * Each value has property name and value (name:value).
        */
-      let extendProp = extendValue.split(':');
+      let extentProp = extentValue.split(':');
 
       /**
        * Expects name and value.
        */
-      if (extendProp.length === 2) {
-        let extendPropName = extendProp[0].trim();
-        let extendPropValue = extendProp[1].trim();
+      if (extentProp.length === 2) {
+        let extentPropName = extentProp[0].trim();
+        let extentPropValue = extentProp[1].trim();
 
-        //TODO: we need to validate measure units meters, pixels, cm %
-        stageExtends[extendPropName] = parseFloat(extendPropValue.replace(/\r?\n| |\r|\t|,/gm, ''));
+        //TODO: we need to validate values >0 and the measure units in meters, pixels, cm %
+        stageExtends[extentPropName] = parseFloat(extentPropValue.replace(/\r?\n| |\r|\t|,/gm, ''));
       }
     });
 
@@ -74,25 +74,25 @@ export class MlStage extends HTMLElement {
     mlWorld.update();
 
     /**
-     * Prepare MLStageExtension with extends values.
+     * Prepare MLStageExtent with extents values.
      */
-    var stageExt = new MLStageExtension(stageExtends.top, stageExtends.right, stageExtends.bottom, stageExtends.left, stageExtends.front, stageExtends.back);
+    var stageExt = new MLStageExtent(stageExtends.top, stageExtends.right, stageExtends.bottom, stageExtends.left, stageExtends.front, stageExtends.back);
 
     /**
      * Request stage size and position.
      */
-    window.mlWorld.setStageExtension(stageExt).then((result) => {
+    window.mlWorld.setStageExtent(stageExt).then((result) => {
       if (result.state == 'denied') {
         /**
          * Permission was denied.
          */
-        console.error(`Permission requesting new stage's extends has not been granted.`);
+        console.error(`Permission requesting new stage's extents has not been granted.`);
       }
     }).catch((error) => {
-      console.error(`There was an error requesting the new stage's extends. Error: ${error.message}`);
+      console.error(`There was an error requesting the new stage's extents. Error: ${error.message}`);
     }).finally(() => {
       /**
-       * Show volume when setStageExtension is finished.
+       * Show volume when setStageExtent is finished.
        */
       mlWorld[0].visible = true;
     });
@@ -101,14 +101,14 @@ export class MlStage extends HTMLElement {
   /*** Element's Properties. ***/
 
   /**
-   * extends: Element's Property.
+   * extents: Element's Property.
    */
-  get extends() {
-    return this.getAttribute('extends');
+  get extents() {
+    return this.getAttribute('extents');
   }
-  set extends(v) {
-    if (this.getAttribute('extends') === v.toString()) return;
-    this.setAttribute('extends', v);
+  set extents(v) {
+    if (this.getAttribute('extents') === v.toString()) return;
+    this.setAttribute('extents', v);
   }
 };
 

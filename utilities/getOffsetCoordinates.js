@@ -21,9 +21,9 @@ let getOffsetCoordinates = (el, offsetArr) => {
    * If offset value is numeric, calculate distance from center of volume (0,0,0).
    * If offset value is undefined, use current location.
    */
-  let x = (!isNaN(parseFloat(offsetPositionArr[0]))) ? getXCoordinate(offsetPositionArr[0]) + (window.mlWorld.stageExtension.left - window.mlWorld.stageExtension.right)/2 : el._mainTransform.getLocalPosition()[0];
-  let y = (!isNaN(parseFloat(offsetPositionArr[1]))) ? getYCoordinate(offsetPositionArr[1]) + (window.mlWorld.stageExtension.bottom - window.mlWorld.stageExtension.top)/2 : el._mainTransform.getLocalPosition()[1];
-  let z = (!isNaN(parseFloat(offsetPositionArr[2]))) ? getZCoordinate(offsetPositionArr[2]) + (window.mlWorld.stageExtension.back - window.mlWorld.stageExtension.front)/2 : el._mainTransform.getLocalPosition()[2];
+  let x = (!isNaN(parseFloat(offsetPositionArr[0]))) ? getXCoordinate(offsetPositionArr[0]) + (window.mlWorld.stageExtent.left - window.mlWorld.stageExtent.right)/2 : el._mainTransform.getLocalPosition()[0];
+  let y = (!isNaN(parseFloat(offsetPositionArr[1]))) ? getYCoordinate(offsetPositionArr[1]) + (window.mlWorld.stageExtent.bottom - window.mlWorld.stageExtent.top)/2 : el._mainTransform.getLocalPosition()[1];
+  let z = (!isNaN(parseFloat(offsetPositionArr[2]))) ? getZCoordinate(offsetPositionArr[2]) + (window.mlWorld.stageExtent.back - window.mlWorld.stageExtent.front)/2 : el._mainTransform.getLocalPosition()[2];
 
   return [x, y, z];
 };
