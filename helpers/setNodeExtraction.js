@@ -186,7 +186,7 @@ let handleExtraction = (e) => {
     /**
      * Create Matrix with position for the extracted node.
      */
-    let transformMatrix = new DOMMatrix().translate(mainTransformPositionX, mainTransformPositionY + (window.mlWorld.viewportHeight/2 + window.mlWorld.viewPortPositionTopLeft.y) , newPositionZ);
+    let transformMatrix = new DOMMatrix().translate(mainTransformPositionX + (window.mlWorld.stageExtent.right - window.mlWorld.stageExtent.left)/2, mainTransformPositionY + (window.mlWorld.viewportHeight/2 + window.mlWorld.viewPortPositionTopLeft.y) + (window.mlWorld.stageExtent.top - window.mlWorld.stageExtent.bottom)/2, newPositionZ + (window.mlWorld.stageExtent.front - window.mlWorld.stageExtent.back)/2);
 
     /***
      * Call extractContent on transform.
