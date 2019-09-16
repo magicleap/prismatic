@@ -49,15 +49,6 @@ else {
   console.warn("Unable to render content: No mixed-reality browser detected.");
 }
 
-/**
- * Dispatch mlstage event to reposition the JS volume in case the window.mlWorld.viewPortPositionTopLeft.y was updated.
- */
-window.addEventListener('load', (event) => {
-  let mlstageEvent = new Event('mlstage');
-  document.dispatchEvent(mlstageEvent);
-});
-
-
 export {
   MlStage,
   MlModel,
