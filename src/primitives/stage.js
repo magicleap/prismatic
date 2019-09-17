@@ -82,10 +82,20 @@ export class MlStage extends HTMLElement {
      * Request stage size and position.
      */
     window.mlWorld.setStageExtent(stageExt).then((result) => {
+      if (result.state == 'granted') {
+        /**
+         * Once the stage permission is granted, dispatch stage-granted synthetic event.
+         */
+        var event = new Event('stage-granted');
+        this.dispatchEvent(event);
+      }
       if (result.state == 'denied') {
         /**
-         * Permission was denied.
+         * Permission was denied. Dispatch stage-denied synthetic event.
          */
+        var event = new Event('stage-denied');
+        this.dispatchEvent(event);
+
         console.error(`Permission requesting new stage's extents has not been granted.`);
       }
     }).catch((error) => {

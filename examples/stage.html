@@ -15,7 +15,7 @@
   </style>
 </head>
 <body>
-  <ml-stage  extents="back:0.60;"></ml-stage>
+  <ml-stage id="stage" extents="back:0.60;"></ml-stage>
 
   <div class="example">Example for stage and transform animation event.</div>
 
@@ -26,14 +26,19 @@
     style="width: 50%; height: 50%; position: absolute; top:60%; left: 50%; transform: translate(-50%, -50%);"
     z-offset="-1000px"
     model-scale="0 0 0"
-    scale-to="axes: 0.5 0.5 0.5; duration: 16s; track: 1;"
-    move-by="axes: 0 0px 900px; duration: 20s; track: 2;"
-    model-animation-speed="1"
+    model-animation-speed="0"
     model-animation="walking, false, -1">
   </ml-model>
 
   <script type="module">
     import * as PRISMATIC from '../src/main.js';
+
+    /* When stage is ready, start animation. */
+    stage.addEventListener('stage-granted', (e) => {
+      turkeyModel.animationSpeed = 1;
+      turkeyModel.scaleTo="axes: 0.5 0.5 0.5; duration: 16s; track: 1;"
+      turkeyModel.moveBy="axes: 0 0px 900px; duration: 20s; track: 2;"
+    });
 
     turkeyModel.addEventListener('transform-animation-end', (e) => {
       /* Do spotted animation when move-by is finished. */
