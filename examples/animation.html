@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prismatic 2.0</title>
+  <meta name="viewport" content="transparent-background">
+
+  <script type="module" src="../src/main.js"></script>
+
+  <style>
+		.example {
+			color: #FFF;
+      font-family: "Gill Sans MT";
+      font-size: 30px;
+      text-align: center;
+    }
+	</style>
+</head>
+<body>
+  <div class="example">Example for model animation.</div>
+
+  <ml-model
+    id="pigModel"
+    src="./models/pig.glb"
+    style="width: 50%; height: 50%; position: absolute; top:50%; left: 50%; transform: translate(-50%, -50%);"
+    model-animation="Take 001, false, 2"
+    model-animation-speed="1"
+    extractable="true"
+    extracted-scale="2">
+  </ml-model>
+
+</body>
+</html>
