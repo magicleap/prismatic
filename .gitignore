@@ -26,8 +26,6 @@ node_modules/
 bnr-scripts/
 
 # Ignore BNR output folders.
-dist/
-docs/
 public/
 internal/
 package-lock.json
