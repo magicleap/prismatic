@@ -20,7 +20,7 @@ import { fadeIn } from '../effects/fadeIn.js';
 import { wiggle } from '../effects/wiggle.js';
 
 /**
- * &lt;ml-model&gt; HTML Custom Element.
+ * ml-model HTML Custom Element.
  */
 export class MlModel extends HTMLElement {
 

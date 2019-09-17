@@ -1,7 +1,4 @@
 /**
- * @module helpers/setSkipRaycast
- */
-/**
  * Set skipRaycast on a node.
  * If raycast attribute is set to false, skip node raycast.
  * @param {HTMLElement} el HTML custom element.

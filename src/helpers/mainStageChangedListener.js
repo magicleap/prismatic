@@ -1,6 +1,3 @@
-/**
- * @module helpers/mainStageChangedListener
- */
  /**
  * Handler when Stage changes.
  * Set new position and size of JS volume.

@@ -1,7 +1,4 @@
 /**
- * @module utilities/isElementVisible
- */
-/**
  * Determine if HTML custom element is visible in DOM.
  * Returns HTML custom element visible as a boolean.
  * @param {HTMLElement} el HTML custom element.

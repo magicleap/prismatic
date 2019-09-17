@@ -1,7 +1,4 @@
 /**
- * @module helpers/createVolume
- */
-/**
  * Create main JS volume.
  * Returns the JS Volume.
  * @param {HTMLElement} el HTML custom element.

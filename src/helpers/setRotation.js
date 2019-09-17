@@ -1,6 +1,3 @@
-/**
- * @module helpers/setRotation
- */
 import { parseRotation } from '../utilities/parseRotation.js';
 import { eulerToQuaternion } from '../utilities/eulerToQuaternion.js';
 

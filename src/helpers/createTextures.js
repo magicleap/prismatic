@@ -1,7 +1,4 @@
 /**
- * @module helpers/createTexture
- */
-/**
  * Iterate through array of textures paths and create an Image HTML element to create textures.
  * Returns the textures.
  * @param {Array.<String>} texturePathArray Path to texture files.

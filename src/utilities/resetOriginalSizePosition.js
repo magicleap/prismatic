@@ -1,7 +1,4 @@
 /**
- * @module utilities/resetOriginalSizePosition
- */
-/**
  * Reset properties set on setHoverState module.
  * @param {HTMLElement} el HTML custom element.
  */

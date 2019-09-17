@@ -1,7 +1,4 @@
 /**
- * @module utilities/eulerToQuaternion
- */
-/**
  * Conversion Euler to Quaternion.
  * Returns array with rotation in quaternion.
  * @param {number[]} eulerArray rotation angle values in array.

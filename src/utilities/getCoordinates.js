@@ -1,6 +1,3 @@
-/**
- * @module utilities/getCoordinates
- */
 import { pixelsToMetersSize } from '../utilities/pixelsToMetersSize.js';
 
 /**

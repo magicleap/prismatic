@@ -1,6 +1,3 @@
-/**
- * @module helpers/setNodePosition
- */
 import { getCoordinates } from '../utilities/getCoordinates.js';
 
 /**

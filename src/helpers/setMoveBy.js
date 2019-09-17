@@ -1,6 +1,3 @@
-/**
- * @module helpers/setMoveBy
- */
 import { parseAnimation } from '../utilities/parseAnimation.js';
 import { pixelsToMetersSize } from '../utilities/pixelsToMetersSize.js';
 

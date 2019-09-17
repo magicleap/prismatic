@@ -1,7 +1,7 @@
 import { createVolume } from '../helpers/createVolume.js'
 
 /**
- * &lt;ml-stage&gt; HTML Custom Element.
+ * ml-stage HTML Custom Element.
  */
 export class MlStage extends HTMLElement {
   /**

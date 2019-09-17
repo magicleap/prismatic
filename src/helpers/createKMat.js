@@ -1,8 +1,4 @@
 /**
- * @module helpers/createKMat
- */
-
-/**
  * Fetch the kmat file and convert to arrayBuffer to create kmat from volume.
  * Returns the kmat.
  * @param {string} kmatPath Path to kmat file

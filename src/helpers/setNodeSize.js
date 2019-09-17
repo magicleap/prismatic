@@ -1,6 +1,3 @@
-/**
- * @module helpers/setNodeSize
- */
 import { doAutoSize } from '../utilities/doAutoSize.js';
 import { getHTMLElementSize } from '../utilities/getHTMLElementSize.js';
 

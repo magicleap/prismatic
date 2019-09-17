@@ -1,6 +1,3 @@
-/**
- * @module helpers/setNodeExtraction
- */
 import { getHTMLElementSize } from '../utilities/getHTMLElementSize.js';
 
 /**

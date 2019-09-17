@@ -1,8 +1,4 @@
 /**
- * @module effects/fadeOut
- */
-
-/**
  * @function fadeOut
  * @summary Fade out effect on a node. Change the color alpha channel.
  */

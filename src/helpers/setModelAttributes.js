@@ -1,6 +1,3 @@
-/**
- * @module helpers/setModelAttributes
- */
 import { setSkipRaycast } from '../helpers/setSkipRaycast.js';
 import { setScale as setModelScale } from '../helpers/setScale.js';
 import { setRotation as setModelRotation } from '../helpers/setRotation.js';

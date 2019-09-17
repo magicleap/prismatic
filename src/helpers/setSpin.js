@@ -1,6 +1,3 @@
-/**
- * @module helpers/setSpin
- */
 import { parseAnimation } from '../utilities/parseAnimation.js';
 
 /**

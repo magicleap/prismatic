@@ -1,6 +1,3 @@
-/**
- * @module helpers/setResizeObserver
- */
 import { setNodeSize} from '../helpers/setNodeSize.js';
 
 /**

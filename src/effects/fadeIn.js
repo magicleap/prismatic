@@ -1,8 +1,4 @@
 /**
- * @module effects/fadeIn
- */
-
-/**
  * @function fadeIn
  * @summary Fade in effect on a node. Change the color alpha channel.
  */

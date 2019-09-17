@@ -1,7 +1,3 @@
-/**
- * @module utilities/getAttributeInPixel
- */
-
 import { PIXEL_TO_CM } from '../utilities/constants.js';
 
 /**

@@ -1,7 +1,4 @@
 /**
- * @module helpers/loadResource
- */
-/**
  * Create a model resource and find the shader type.
  * Returns resources object with resource and shader type.
  * @param {HTMLElement} el HTML custom element.

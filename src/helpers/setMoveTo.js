@@ -1,6 +1,3 @@
-/**
- * @module helpers/setMoveTo
- */
 import { parseAnimation } from '../utilities/parseAnimation.js';
 import { getOffsetCoordinates } from '../utilities/getOffsetCoordinates.js';
 import { pixelsToMetersSize } from '../utilities/pixelsToMetersSize.js';

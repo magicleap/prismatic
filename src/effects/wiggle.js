@@ -1,8 +1,4 @@
 /**
- * @module effects/wiggle
- */
-
-/**
  * @function wiggle
  * @summary Wiggle effect on a node. Use transform rotateBy.
  */

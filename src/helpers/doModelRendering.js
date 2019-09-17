@@ -1,6 +1,3 @@
-/**
- * @module helpers/doModelRendering
- */
 import { parseMaterials } from '../utilities/parseMaterials.js';
 
 import { createTextures } from '../helpers/createTextures.js';

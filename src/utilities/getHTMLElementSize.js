@@ -1,6 +1,3 @@
-/**
- * @module utilities/getHTMLElementSize
- */
 import { pixelsToMetersSize } from '../utilities/pixelsToMetersSize.js';
 
 /**

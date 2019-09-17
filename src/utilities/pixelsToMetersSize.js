@@ -1,6 +1,3 @@
-/**
- * @module utilities/pixelsToMetersSize
- */
 import { PIXEL_TO_METER } from '../utilities/constants.js';
 
 /**

@@ -1,7 +1,4 @@
 /**
- * @module helpers/setScale
- */
-/**
  * The scale attribute value is parsed and added to transform.setLocalScale().
  * @param {HTMLElement} el HTML custom element.
  * @param {string} nodeScale Node scale attribute value.

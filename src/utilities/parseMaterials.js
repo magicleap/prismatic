@@ -1,7 +1,4 @@
 /**
- * @module utilities/parseMaterials
- */
-/**
  * Validate and parse material attribute values.
  * Returns JSON Object with the material properties (kmat and textures).
  * @param {string} attributeValue Materials attribute value.

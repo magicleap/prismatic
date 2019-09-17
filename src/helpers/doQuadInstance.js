@@ -1,6 +1,3 @@
-/**
- * @module helpers/doQuadInstance
- */
 import { createQuad } from '../helpers/createQuad.js';
 
  /**

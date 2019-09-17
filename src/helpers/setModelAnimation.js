@@ -1,6 +1,3 @@
-/**
- * @module helpers/setModelAnimation
- */
 import { parseModelAnimation } from '../utilities/parseModelAnimation.js';
 
 /**

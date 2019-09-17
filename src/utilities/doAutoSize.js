@@ -1,7 +1,3 @@
-/**
- * @module utilities/doAutoSize
- */
-
 import { setMutationObserver, unsetMutationObserver } from '../helpers/setMutationObserver.js';
 import { isElementVisible } from '../utilities/isElementVisible.js';
 

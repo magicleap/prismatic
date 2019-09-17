@@ -1,7 +1,4 @@
 /**
- * @module utilities/parseEnvironmentLighting
- */
-/**
  * Parse and validate environment lighting attribute values.
  * Returns JSON Object with the  environment lighting properties.
  * @param {string} lightingString Environment lighting attribute value.

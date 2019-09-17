@@ -1,6 +1,3 @@
-/**
- * @module utilities/getOffsetCoordinates
- */
 import { getXCoordinate, getYCoordinate, getZCoordinate } from './getCoordinates.js';
 
 /**

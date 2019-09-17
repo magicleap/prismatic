@@ -1,6 +1,3 @@
-/**
- * @module helpers/createQuad
- */
 import { setQuadAttributes } from '../helpers/setQuadAttributes.js';
 import { setSkipRaycast } from '../helpers/setSkipRaycast.js';
 import { setNodeSize as setQuadSize } from '../helpers/setNodeSize.js';

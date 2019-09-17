@@ -1,7 +1,4 @@
 /**
- * @module utilities/constants
- */
- /**
  * @constant
  * @summary Library Constants.
  */

@@ -1,6 +1,3 @@
-/**
- * @module helpers/setMutationObserver
- */
 import { setNodePosition } from '../helpers/setNodePosition.js';
 import { isElementVisible } from '../utilities/isElementVisible.js';
 

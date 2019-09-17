@@ -20,7 +20,7 @@ import { fadeIn } from '../effects/fadeIn.js';
 import { wiggle } from '../effects/wiggle.js';
 
 /**
- * &lt;ml-quad&gt; HTML Custom Element.
+ * ml-quad HTML Custom Element.
  */
 export class MlQuad extends HTMLElement {
 

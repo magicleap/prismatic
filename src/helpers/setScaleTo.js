@@ -1,6 +1,3 @@
-/**
- * @module helpers/setScaleTo
- */
 import { parseAnimation } from '../utilities/parseAnimation.js';
 
 /**

@@ -1,6 +1,3 @@
-/**
- * @module helpers/setQuadAttributes
- */
 import { setSkipRaycast } from '../helpers/setSkipRaycast.js';
 import { setScale as setQuadScale } from '../helpers/setScale.js';
 import { setRotation as setQuadRotation } from '../helpers/setRotation.js';

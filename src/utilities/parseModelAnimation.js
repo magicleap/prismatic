@@ -1,7 +1,4 @@
 /**
- * @module utilities/parseModelAnimation
- */
-/**
  * Parse and validate model-animation attribute values.
  * Attribute value could be in key:value format (name:name;paused:true;iterations:12) or just values delimeted by , (name, true, 12)
  * Use default values of false for paused and -1 for interactions.

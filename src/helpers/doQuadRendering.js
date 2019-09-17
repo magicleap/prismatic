@@ -1,6 +1,3 @@
-/**
- * @module helpers/doQuadRendering
- */
 import { createQuadTexture } from '../helpers/createQuadTexture.js';
 import { createQuad } from '../helpers/createQuad.js';
 

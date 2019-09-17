@@ -1,6 +1,3 @@
-/**
- * @module helpers/setHoverState
- */
 import { MOUSE_OVER_Z_MOVE, MOUSE_OVER_RATIO } from '../utilities/constants.js';
 
 /**

@@ -1,7 +1,3 @@
-/**
- * @module helpers/createModel
- */
-
 import { setModelAttributes } from '../helpers/setModelAttributes.js';
 import { setSkipRaycast } from '../helpers/setSkipRaycast.js';
 import { setNodeSize as setModelSize} from '../helpers/setNodeSize.js';

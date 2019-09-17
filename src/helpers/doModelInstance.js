@@ -1,6 +1,3 @@
-/**
- * @module helpers/doModelInstance
- */
 import { createModel } from '../helpers/createModel.js';
 
 /**

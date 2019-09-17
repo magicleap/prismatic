@@ -1,6 +1,3 @@
-/**
- * @module helpers/setScrollable
- */
 import { setNodePosition } from '../helpers/setNodePosition.js';
 
 /**

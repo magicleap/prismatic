@@ -1,6 +1,3 @@
-/**
- * @module utilities/parseRotation
- */
 import { degreesToRadians } from '../utilities/degreesToRadians.js';
 
 /**

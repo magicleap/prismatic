@@ -1,6 +1,3 @@
-/**
- * @module helpers/setResizeListener
- */
 import { setNodePosition } from '../helpers/setNodePosition.js';
 
 /**

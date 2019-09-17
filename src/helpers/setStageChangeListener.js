@@ -1,6 +1,3 @@
-/**
- * @module helpers/setStageChangeListener
- */
 import { setNodePosition } from '../helpers/setNodePosition.js';
 
 /**

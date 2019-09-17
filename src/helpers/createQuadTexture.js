@@ -1,8 +1,4 @@
 /**
- * @module helpers/createQuadTexture
- */
-
-/**
  * Create quad texture with the quad path.
  * Only JPG and PNG are supported at the moment.
  * Returns the texture.

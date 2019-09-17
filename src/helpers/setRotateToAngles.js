@@ -1,6 +1,3 @@
-/**
- * @module helpers/setRotateToAngles
- */
 import { parseAnimation } from '../utilities/parseAnimation.js';
 
 /**
