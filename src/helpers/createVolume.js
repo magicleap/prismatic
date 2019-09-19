@@ -27,8 +27,7 @@ let createVolume = (el) => {
   }
 
   /**
-   * Add reference to volume.
-   * Workaround for bug: BROW-3948.
+   * Add reference to volume for garbage collection.
    */
   el._volume = volume;
 
@@ -50,7 +49,7 @@ let createVolume = (el) => {
   volume.visible = true;
 
   /**
-   * Listen for animationEnd event and dispatch custom event from HTMLElement.
+   * Listen for animationEnd event and dispatch custom event from HTML custom element.
    */
   volume.addEventListener("mlanimation", (event) => {
     if (event.type === 'animationEnd' && event.model && event.model.htmlElement) {
@@ -76,7 +75,7 @@ let createVolume = (el) => {
   });
 
   /**
-   * Listen for mlraycast event and dispatch custom event for node from custom HTMLElement when node is visible.
+   * Listen for mlraycast event and dispatch custom event for node from HTML custom element when node is visible.
    * Add inputType property to custom event to differentiate between control (totem) and headpos raycast.
    */
   volume.addEventListener("mlraycast", (event) => {

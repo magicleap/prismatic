@@ -62,7 +62,7 @@ export class MlStage extends HTMLElement {
         let extentPropName = extentProp[0].trim();
         let extentPropValue = extentProp[1].trim();
 
-        //TODO: we need to validate values >0 and the measure units in meters, pixels, cm %
+        //TODO: we need to validate measure units in meters, pixels, cm %
         stageExtents[extentPropName] = parseFloat(extentPropValue.replace(/\r?\n| |\r|\t|,/gm, ''));
       }
     });

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prismatic 2.0</title>
+  <meta name="viewport" content="transparent-background">
+
+  <script type="module" src="../src/main.js"></script>
+
+  <style>
+    .example {
+      color: #FFF;
+      font-family: "Gill Sans MT";
+      font-size: 30px;
+      text-align: center;
+    }
+
+    ml-model {
+      width: 150px;  height: 250px; display: inline-flex;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="example">Instances Example.</div>
+
+  <ml-model id="duck" src="./models/Duck.glb" extractable></ml-model>
+
+  <ml-model instance="duck" rotation="0, 0, 90deg"></ml-model>
+  <ml-model instance="duck" z-offset="400"></ml-model>
+  <ml-model instance="duck" model-scale="0.7 0.7 0.7"></ml-model>
+  <ml-model instance="duck" move-by="axes: 0 0 300px; duration: 15s; track: 1;"></ml-model>
+  <ml-model instance="duck"></ml-model>
+  <ml-model instance="duck"></ml-model>
+  <ml-model instance="duck" rotate-by-angles="angles: 0 -90deg 0; duration: 25s; track: 1;"></ml-model>
+  <ml-model instance="duck"></ml-model>
+  <ml-model instance="duck"rotate-to-angles="angles: 0 180deg 0; duration: 5s; track: 1;"></ml-model>
+  <ml-model instance="duck"></ml-model>
+  <ml-model instance="duck" rotation="0, -90deg, 0deg" scale-to="axes: 1.3 1.3 1.3; duration: 2s; track: 1;"></ml-model>
+  <ml-model instance="duck" ></ml-model>
+  <ml-model instance="duck" spin="axes: 0 1 0; angle: 40deg; duration: 120s; track: 1;"></ml-model>
+
+</body>
+</html>
