@@ -1,27 +1,7 @@
 {
   "name": "Prismatic",
-  "version": "2.0.0-github.0",
   "description": "A declarative JS library for creating 3D content for Magic Leap's Helio browser",
   "author": "Magic Leap Inc.",
-  "license": "SEE LICENSE IN LICENSE",
-  "keywords": [
-    "Magic Leap",
-    "Helio",
-    "Helio Browser",
-    "Prismatic",
-    "Lumin Runtime",
-    "3D",
-    "Browser Development",
-    "3D Browser Development",
-    "Mixed Reality Web",
-    "Spatial Computing",
-    "VR",
-    "MR",
-    "AR",
-    "XR",
-    "Declarative Models",
-    "Declarative 3d Web",
-    "Shaggles"
-  ],
+  "version": "2.0.0-github.0",
   "main": "src/main.js"
 }
