@@ -56,13 +56,6 @@ export class MlQuad extends HTMLElement {
     }
 
     /**
-     * When CSS display is not specified, set CSS display to inline-flex.
-     */
-    if (!this.style.display) {
-      this.style.display = 'inline-flex';
-    }
-
-    /**
      * If node has extractable flag, set hover and extract.
      */
     if (this.extractable) {
