@@ -83,7 +83,7 @@ let setModelAttributes = (el, elemAttributes) => {
      * Set skipRaycast.
      */
     if (elemAttributes.raycast) {
-      setSkipRaycast(model, !(elemAttributes.raycast == 'true'));
+      setSkipRaycast(model, !(elemAttributes.raycast === 'true'));
     }
 
     /**

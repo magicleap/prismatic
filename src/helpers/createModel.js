@@ -1,5 +1,4 @@
 import { setModelAttributes } from '../helpers/setModelAttributes.js';
-import { setSkipRaycast } from '../helpers/setSkipRaycast.js';
 import { setNodeSize as setModelSize} from '../helpers/setNodeSize.js';
 import { setNodePosition as setModelPosition } from '../helpers/setNodePosition.js';
 
@@ -30,13 +29,6 @@ let createModel = (el, resources) => {
      * Add reference to HTML Custom Element.
      */
     el._model.htmlElement = el;
-
-    /**
-     * Set skipRaycast to true by default, unless raycast attribute is set to true.
-     */
-    if (el.raycast !== 'true') {
-      setSkipRaycast(el._model);
-    }
   }
 
   /**
@@ -64,8 +56,7 @@ let createModel = (el, resources) => {
   /**
    * Once the mesh is loaded, dispatch resource-loaded synthetic event.
    */
-  var event = new Event('resource-loaded');
-  el.dispatchEvent(event);
+  el.dispatchEvent(new Event('resource-loaded'));
 
   /**
    * Set shader.
@@ -150,8 +141,7 @@ let createModel = (el, resources) => {
   /**
    * Once the everything is set, dispatch node-displayed synthetic event.
    */
-  var event = new Event('model-displayed');
-  el.dispatchEvent(event);
+  el.dispatchEvent(new Event('model-displayed'));
 
 };
 

@@ -1,5 +1,4 @@
 import { setQuadAttributes } from '../helpers/setQuadAttributes.js';
-import { setSkipRaycast } from '../helpers/setSkipRaycast.js';
 import { setNodeSize as setQuadSize } from '../helpers/setNodeSize.js';
 import { setNodePosition as setQuadPosition } from '../helpers/setNodePosition.js';
 
@@ -29,14 +28,12 @@ let createQuad = (el, texture) => {
      * Add reference to HTML Custom Element.
      */
     el._quad.htmlElement = el;
-
-    /**
-     * Set skipRaycast to true by default, unless raycast attribute is set to true.
-     */
-    if (el.raycast !== 'true') {
-      setSkipRaycast(el._quad);
-    }
   }
+
+  /**
+   * Set triggerable so volume doesn't go into placement mode when longpress trigger.
+   */
+  el._quad.triggerable = true;
 
   /**
    * Add image texture to quad.
@@ -54,8 +51,7 @@ let createQuad = (el, texture) => {
   /**
    * Once the mesh is loaded, dispatch resource-loaded synthetic event.
    */
-  var event = new Event('resource-loaded');
-  el.dispatchEvent(event);
+  el.dispatchEvent(new Event('resource-loaded'));
 
   /**
    * Create transform if it does not exists.
@@ -95,7 +91,6 @@ let createQuad = (el, texture) => {
     trigger: el.getAttribute('trigger'),
     color: el.getAttribute('color'),
     'quad-scale': el.getAttribute('quad-scale'),
-    'quad-position': el.getAttribute('quad-position'),
     rotation: el.getAttribute('rotation'),
     'rotate-to-angles': el.getAttribute('rotate-to-angles'),
     'rotate-by-angles': el.getAttribute('rotate-by-angles'),
@@ -103,7 +98,7 @@ let createQuad = (el, texture) => {
     'scale-to': el.getAttribute('scale-to'),
     'move-to': el.getAttribute('move-to'),
     'move-by': el.getAttribute('move-by'),
-    'prism-rotation': el.getAttribute('prism-rotation')
+    'environment-lighting': el.getAttribute('environment-lighting')
   };
 
   /**
@@ -119,8 +114,7 @@ let createQuad = (el, texture) => {
   /**
    * Once the quad is loaded, dispatch resource-loaded synthetic event.
    */
-  var event = new Event('quad-displayed');
-  el.dispatchEvent(event);
+  el.dispatchEvent(new Event('quad-displayed'));
 }
 
 export { createQuad }

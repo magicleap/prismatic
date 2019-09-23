@@ -10,7 +10,7 @@ let createTextures = (texturePathsArr) => {
 
   function setImages(texturePath) {
     return new Promise((resolve, reject) => {
-      var img = new Image();
+      let img = new Image();
 
       img.onload = () => {
         resolve(mlWorld[0].createTexture(img, texturePath));

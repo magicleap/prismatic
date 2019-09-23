@@ -37,7 +37,7 @@ let setMutationObserver = (el) => {
       });
     });
 
-    var observerConfig = {
+    let observerConfig = {
       attributeOldValue: true,
       attributes: true,
       attributeFilter: ['style', 'class']

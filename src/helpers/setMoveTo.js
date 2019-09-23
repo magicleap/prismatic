@@ -15,7 +15,7 @@ let setMoveTo = (el, moveToAttributeValue) => {
     let nodeMoveTo = parseAnimation(moveToAttributeValue);
 
     if (nodeMoveTo) {
-      var nodeDestination;
+      let nodeDestination;
 
       if (nodeMoveTo.offset) {
         /**

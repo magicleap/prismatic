@@ -20,7 +20,7 @@ import { fadeIn } from '../effects/fadeIn.js';
 import { wiggle } from '../effects/wiggle.js';
 
 /**
- * ml-quad HTML Custom Element.
+ * <ml-quad> HTML Custom Element.
  */
 export class MlQuad extends HTMLElement {
 
@@ -283,7 +283,7 @@ export class MlQuad extends HTMLElement {
    * raycast: Element's Property.
    */
   get raycast() {
-    return this.getAttribute('raycast');
+    return !(this.getAttribute('raycast') === 'false');
   }
   set raycast(v) {
     if (this.getAttribute('raycast') === v.toString()) return;

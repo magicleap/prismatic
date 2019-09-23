@@ -1,4 +1,5 @@
 import { getHTMLElementSize } from '../utilities/getHTMLElementSize.js';
+import { VOLUME_GAP } from '../utilities/constants.js';
 
 /**
  * Add mousedown event listener to the HTML custom element to handle extraction.
@@ -6,7 +7,7 @@ import { getHTMLElementSize } from '../utilities/getHTMLElementSize.js';
  */
 let setNodeExtraction = (el) => {
   if (el) {
-    el.addEventListener('mousedown', handleExtraction, false);
+    el.addEventListener('mlextraction', handleExtraction, false);
   }
 }
 
@@ -16,7 +17,7 @@ let setNodeExtraction = (el) => {
  */
 let unsetNodeExtraction = (el) => {
   if (el) {
-    el.removeEventListener('mousedown', handleExtraction, false);
+    el.removeEventListener('mlextraction', handleExtraction, false);
   }
 };
 
@@ -25,15 +26,6 @@ let unsetNodeExtraction = (el) => {
  * @param {HTMLElement} el HTML custom element.
  */
 let handleExtraction = (e) => {
-  /**
-   * Return if not initiated from trigger.
-   */
-  if (e.button !== 6) {
-    return;
-  }
-
-  e.stopImmediatePropagation();
-
   /**
    * Assign element to local variable.
    */
@@ -110,7 +102,7 @@ let handleExtraction = (e) => {
        * When breadth is not available, use the min of extracted width and height size for models or 0.001 for quads.
        */
       if (isNaN(eBreadth)) {
-        eBreadth = (el._quad) ?  0.001 : Math.min(eWidth, eHeight);
+        eBreadth = (el._quad) ? VOLUME_GAP : Math.min(eWidth, eHeight);
       }
 
       /**
@@ -175,15 +167,15 @@ let handleExtraction = (e) => {
      */
     let newPositionZ;
     if (el._model) {
-      newPositionZ = mainTransformPositionZ + (el._resource.depth * el._model.getLocalScale()[2]);
+      newPositionZ = aniTransformPositionZ + mainTransformPositionZ + (el._resource.depth * el._model.getLocalScale()[2]);
     } else if (el._quad) {
-      newPositionZ = mainTransformPositionZ;
+      newPositionZ = aniTransformPositionZ + mainTransformPositionZ;
     }
 
     /**
      * Create Matrix with position for the extracted node.
      */
-    let transformMatrix = new DOMMatrix().translate(mainTransformPositionX + (window.mlWorld.stageExtent.right - window.mlWorld.stageExtent.left)/2, mainTransformPositionY + (window.mlWorld.viewportHeight/2 + window.mlWorld.viewPortPositionTopLeft.y) + (window.mlWorld.stageExtent.top - window.mlWorld.stageExtent.bottom)/2, newPositionZ + (window.mlWorld.stageExtent.front - window.mlWorld.stageExtent.back)/2);
+    let transformMatrix = new DOMMatrix().translate(aniTransformPositionX + mainTransformPositionX + (window.mlWorld.stageExtent.right - window.mlWorld.stageExtent.left)/2, aniTransformPositionY + mainTransformPositionY + (window.mlWorld.viewportHeight/2 + window.mlWorld.viewPortPositionTopLeft.y) + (window.mlWorld.stageExtent.top - window.mlWorld.stageExtent.bottom)/2, newPositionZ + (window.mlWorld.stageExtent.front - window.mlWorld.stageExtent.back)/2);
 
     /***
      * Call extractContent on transform.
@@ -246,7 +238,7 @@ let doExtraction = (el, transformMatrix, eSize) => {
   /**
    * Make the extracted volume size the largest of width, height and breadth.
    */
-  let extractedVolumeSize = Math.max(eSize.width, eSize.height, eSize.breadth);
+  let extractedVolumeSize = Math.max(eSize.width, eSize.height, eSize.breadth) + VOLUME_GAP;
 
   /**
    * Extract content with dictionary manifest

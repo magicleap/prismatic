@@ -20,7 +20,7 @@ import { fadeIn } from '../effects/fadeIn.js';
 import { wiggle } from '../effects/wiggle.js';
 
 /**
- * ml-model HTML Custom Element.
+ * <ml-model> HTML Custom Element.
  */
 export class MlModel extends HTMLElement {
 
@@ -309,7 +309,7 @@ export class MlModel extends HTMLElement {
    * raycast: Element's Property.
    */
   get raycast() {
-    return this.getAttribute('raycast');
+    return !(this.getAttribute('raycast') === 'false');
   }
   set raycast(v) {
     if (this.getAttribute('raycast') === v.toString()) return;

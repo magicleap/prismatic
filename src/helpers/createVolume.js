@@ -49,7 +49,7 @@ let createVolume = (el) => {
   volume.visible = true;
 
   /**
-   * Listen for animationEnd event and dispatch custom event from HTML custom element.
+   * Listen for animationEnd event and dispatch custom event from HTMLElement.
    */
   volume.addEventListener("mlanimation", (event) => {
     if (event.type === 'animationEnd' && event.model && event.model.htmlElement) {
@@ -76,7 +76,8 @@ let createVolume = (el) => {
 
   /**
    * Listen for mlraycast event and dispatch custom event for node from HTML custom element when node is visible.
-   * Add inputType property to custom event to differentiate between control (totem) and headpos raycast.
+   * Add inputType property to custom event to differentiate between control and headpos raycast.
+   * Dispatch mouseover, mouseout, mousemove from HTLM custome element to handle hover effect on extractable node.
    */
   volume.addEventListener("mlraycast", (event) => {
     if (event.hitData.targetNode && event.hitData.targetNode.htmlElement) {
@@ -94,22 +95,46 @@ let createVolume = (el) => {
 
       if (node.visible) {
         /**
-         * Differentiate between control (totem) and headpos raycast.
+         * Differentiate between control and headpos raycast.
          */
         let inputype = '';
         if (eventType.search(/control/i) >= 0) {
           inputype = 'control';
+
+          if (eventType === 'nodeOnControlEnter') {
+            let mouseoverEvent = new MouseEvent('mouseover', { view: window, bubbles: true, cancelable: true });
+            el.dispatchEvent(mouseoverEvent);
+          }
+          else if (eventType === 'nodeOnControlMove') {
+            let mousemoveEvent = new MouseEvent('mousemove', { view: window, bubbles: true, cancelable: true });
+            el.dispatchEvent(mousemoveEvent);
+          }
+          else if (eventType === 'nodeOnControlExit') {
+            let mouseoutEvent = new MouseEvent('mouseout', { view: window, bubbles: true, cancelable: true });
+            el.dispatchEvent(mouseoutEvent);
+          }
         }
         else if (eventType.search(/head/i) >= 0) {
           inputype = 'headpos';
         }
         if (event.hitData.type === 'quadNode' || event.hitData.type === 'modelNode'){
-          var newRaycastEvent = new CustomEvent('node-raycast', { detail: { inputType: inputype, type: eventType, hitData: event.hitData }});
+          let newRaycastEvent = new CustomEvent('node-raycast', { detail: { inputType: inputype, type: eventType, hitData: event.hitData }});
           el.dispatchEvent(newRaycastEvent);
         }
       }
     }
   });
+
+
+  volume.addEventListener("mlextraction", (event) => {
+    if (event.targetNode && event.targetNode.htmlElement) {
+      let el = event.targetNode.htmlElement;
+
+      var mlextractionEvent = new Event('mlextraction');
+      el.dispatchEvent(mlextractionEvent);
+    }
+  });
+
 
   return volume;
 };

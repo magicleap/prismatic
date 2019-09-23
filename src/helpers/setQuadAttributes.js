@@ -88,7 +88,7 @@ let setQuadAttributes = (el, elemAttributes) => {
      * Set skipRaycast.
      */
     if (elemAttributes.raycast) {
-      setSkipRaycast(quad, !(elemAttributes.raycast == 'true'));
+      setSkipRaycast(quad, !(elemAttributes.raycast === 'true'));
     }
 
     /**

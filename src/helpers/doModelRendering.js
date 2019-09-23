@@ -13,7 +13,7 @@ let doModelRendering = async (el) => {
   /**
    * Get the volume.
    */
-  var volume = mlWorld[0];
+  let volume = mlWorld[0];
 
   /**
    * Materials attribute has kmat and textures.

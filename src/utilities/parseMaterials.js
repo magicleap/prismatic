@@ -5,7 +5,7 @@
  * @returns {JSONObject} Properties for Materials (kmat and textures).
  */
 let parseMaterials = (attributeValue) => {
-  let materials = {};
+  var materials = {};
 
   /**
    * Attribute values delimeted by semi-colon.

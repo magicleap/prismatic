@@ -5,12 +5,12 @@
  * @returns {JSONObject} Properties for environment lighting.
  */
 let parseEnvironmentLighting = (lightingString) => {
-  var environmentLighting = {};
+  let environmentLighting = {};
   lightingString.split(/;/).forEach(parameter => {
     /**
      * Each attribute value has property name and value (name:value).
      */
-    var parameterArr = parameter.split(':');
+    let parameterArr = parameter.split(':');
 
     /**
      * Expects name and value.

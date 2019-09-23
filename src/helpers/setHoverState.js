@@ -20,6 +20,7 @@ let setHoverState = (el) => {
   el.addEventListener('mouseover', handleHoverStateMouseOverListener);
   el.addEventListener('mouseout',  handleHoverStateMouseOutListener);
   el.addEventListener('mousemove', handleHoverStateMouseMoveListener);
+
 };
 
 /**
@@ -55,11 +56,18 @@ let handleHoverStateMouseOverListener = (e) => {
    */
   let node = (el._model ? el._model : el._quad);
 
+  /**
+   * If the original position on Z is different from the current position on Z then mouse over effect already happened.
+   */
+  if (el._originalPosition && el._originalPosition[2] !== el._mainTransform.getLocalPosition()[2]) {
+   return;
+  }
+
   if (node && node.visible) {
     /**
      * Get the volume.
      */
-    var volume = mlWorld[0];
+    let volume = mlWorld[0];
 
     /**
      * Cancel mousemove on mouseover.
@@ -104,9 +112,8 @@ let handleHoverStateMouseOverListener = (e) => {
  */
 let handleHoverStateMouseMoveListener = (e) => {
   let el = e.target;
-  let mouseOverEvent = document.createEvent('MouseEvent');
-  mouseOverEvent.initEvent('mouseover', true, true);
-  el.dispatchEvent(mouseOverEvent);
+  let mouseoverEvent = new MouseEvent('mouseover', {view: window, bubbles: true, cancelable: true});
+  el.dispatchEvent(mouseoverEvent);
 }
 
 /**
@@ -123,11 +130,18 @@ let handleHoverStateMouseOutListener = (e) => {
    */
   let node = (el._model ? el._model : el._quad);
 
+  /**
+   * If the original position on Z is the same as the current position on Z then reset of mouse over effect already happened.
+   */
+  if (el._originalPosition && el._originalPosition[2] === el._mainTransform.getLocalPosition()[2]) {
+   return;
+  }
+
   if (node) {
     /**
      * Get the volume.
      */
-    var volume = mlWorld[0];
+    let volume = mlWorld[0];
 
     /**
      * Send control haptic vibe on hover.
