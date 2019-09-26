@@ -4,8 +4,7 @@ import { MOUSE_OVER_Z_MOVE, MOUSE_OVER_RATIO } from '../utilities/constants.js';
  * Add effects on node set as extractable.
  * Add mouseover event listener to increase the size of the node and move node on the z-axis on mouseover.
  * Add mouseout event listener to reset to node size and z-position on mouseout.
- * Add mousemove event listener to dispatch mouseover event on mousemove.
-* @param {HTMLElement} el HTML custom element.
+ * @param {HTMLElement} el HTML custom element.
  */
 let setHoverState = (el) => {
   /**
@@ -15,18 +14,15 @@ let setHoverState = (el) => {
   el.style.cursor = "-webkit-grab";
 
   /**
-   * Add event Listeners for mouse over, out and move.
+   * Add event Listeners for mouse over and out.
    */
   el.addEventListener('mouseover', handleHoverStateMouseOverListener);
   el.addEventListener('mouseout',  handleHoverStateMouseOutListener);
-  el.addEventListener('mousemove', handleHoverStateMouseMoveListener);
-
 };
 
 /**
  * Remove mouseover event listener.
  * Remove mouseout event listener.
- * Remove mousemove event listener.
  */
 let unsetHoverState = (el) => {
   /**
@@ -35,11 +31,10 @@ let unsetHoverState = (el) => {
   el.style.cursor = "auto";
 
   /**
-   * Remove event Listeners for mouse over, out and move.
+   * Remove event Listeners for mouse over and out.
    */
   el.removeEventListener('mouseover', handleHoverStateMouseOverListener);
   el.removeEventListener('mouseout',  handleHoverStateMouseOutListener);
-  el.removeEventListener('mousemove', handleHoverStateMouseMoveListener);
 };
 
 /**
@@ -68,11 +63,6 @@ let handleHoverStateMouseOverListener = (e) => {
      * Get the volume.
      */
     let volume = mlWorld[0];
-
-    /**
-     * Cancel mousemove on mouseover.
-     */
-    el.removeEventListener('mousemove', handleHoverStateMouseMoveListener);
 
     /**
      * Send control haptic tick on hover.
@@ -105,15 +95,6 @@ let handleHoverStateMouseOverListener = (e) => {
      */
     el._mainTransform.moveTo(new Float32Array([el._originalPosition[0], el._originalPosition[1], (el._originalPosition[2] + MOUSE_OVER_Z_MOVE)]), 0.1, -2);
   }
-}
-
-/**
- * Handle mousemove event on an extractable node.
- */
-let handleHoverStateMouseMoveListener = (e) => {
-  let el = e.target;
-  let mouseoverEvent = new MouseEvent('mouseover', {view: window, bubbles: true, cancelable: true});
-  el.dispatchEvent(mouseoverEvent);
 }
 
 /**

@@ -15,8 +15,7 @@ let doQuadRendering = async (el) => {
   /**
    * Dispatch synthetic event quad-readytoload.
    */
-  let event = new Event('quad-readytoload');
-  el.dispatchEvent(event);
+  el.dispatchEvent(new Event('quad-readytoload'));
 
   /**
    * create the quad.

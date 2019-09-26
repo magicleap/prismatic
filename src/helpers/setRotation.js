@@ -1,5 +1,5 @@
 import { parseRotation } from '../utilities/parseRotation.js';
-import { eulerToQuaternion } from '../utilities/eulerToQuaternion.js';
+import { angleToQuaternion } from '../utilities/angleToQuaternion.js';
 
 /**
  * The rotation attribute value is parsed and set a quaternion.
@@ -11,7 +11,7 @@ let setRotation = (el, rotation) => {
    * Parse rotation attribute values and map to quaternions.
    */
   if (rotation) {
-    let rotationQuaternionArr = eulerToQuaternion(parseRotation(rotation));
+    let rotationQuaternionArr = angleToQuaternion(parseRotation(rotation));
     if (rotationQuaternionArr && el._transform) {
       el._transform.setLocalRotation(new Float32Array(rotationQuaternionArr));
     }

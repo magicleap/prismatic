@@ -20,33 +20,32 @@ let doModelRendering = async (el) => {
    * Parse and validate materials.
    */
   if (el.hasAttribute('materials')) {
-    var materials = parseMaterials(el.getAttribute('materials'));
-  }
+    let materials = parseMaterials(el.getAttribute('materials'));
 
-  if (materials) {
-    /**
-     * Create textures, read textures array returned.
-     */
-    el._textures = await createTextures(materials.textures);
+    if (materials) {
+      /**
+       * Create textures, read textures array returned.
+       */
+      el._textures = await createTextures(materials.textures);
 
-    /**
-     * Create KMat, read KMat returned.
-     */
-    el._kmat = await createKMat(materials.kmat);
+      /**
+       * Create KMat, read KMat returned.
+       */
+      el._kmat = await createKMat(materials.kmat);
 
-    /**
-     * Add texture resources to kmat.
-     */
-    el._textures.forEach(texture => {
-      el._kmat.addDependentResource(texture);
-    });
+      /**
+       * Add texture resources to kmat.
+       */
+      el._textures.forEach(texture => {
+        el._kmat.addDependentResource(texture);
+      });
+    }
   }
 
   /**
    * Dispatch synthetic event mesh-readytoload.
    */
-  let event = new Event('mesh-readytoload');
-  el.dispatchEvent(event);
+  el.dispatchEvent(new Event('mesh-readytoload'));
 
   /**
    * Get the model's resources.

@@ -76,7 +76,7 @@ export class MlStage extends HTMLElement {
     /**
      * Prepare MLStageExtent with extents values.
      */
-    var stageExt = new MLStageExtent(stageExtents.top, stageExtents.right, stageExtents.bottom, stageExtents.left, stageExtents.front, stageExtents.back);
+    let stageExt = new MLStageExtent(stageExtents.top, stageExtents.right, stageExtents.bottom, stageExtents.left, stageExtents.front, stageExtents.back);
 
     /**
      * Request stage size and position.
@@ -86,15 +86,13 @@ export class MlStage extends HTMLElement {
         /**
          * Once the stage permission is granted, dispatch stage-granted synthetic event.
          */
-        var event = new Event('stage-granted');
-        this.dispatchEvent(event);
+        this.dispatchEvent(new Event('stage-granted'));
       }
       if (result.state == 'denied') {
         /**
          * Permission was denied. Dispatch stage-denied synthetic event.
          */
-        var event = new Event('stage-denied');
-        this.dispatchEvent(event);
+        this.dispatchEvent(new Event('stage-denied'));
 
         console.error(`Permission requesting new stage's extents has not been granted.`);
       }

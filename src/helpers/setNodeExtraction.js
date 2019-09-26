@@ -1,8 +1,9 @@
 import { getHTMLElementSize } from '../utilities/getHTMLElementSize.js';
+import { quaternionToAngle } from '../utilities/quaternionToAngle.js';
 import { VOLUME_GAP } from '../utilities/constants.js';
 
 /**
- * Add mousedown event listener to the HTML custom element to handle extraction.
+ * Add mlextraction event listener to the HTML custom element to handle extraction.
  * @param {HTMLElement} el HTML custom element.
  */
 let setNodeExtraction = (el) => {
@@ -12,8 +13,8 @@ let setNodeExtraction = (el) => {
 }
 
 /**
-* Remove mousedown event listener from the node.
-* @param {HTMLElement} el HTML custom element.
+ * Remove mlextraction event listener from the node.
+ * @param {HTMLElement} el HTML custom element.
  */
 let unsetNodeExtraction = (el) => {
   if (el) {
@@ -26,6 +27,17 @@ let unsetNodeExtraction = (el) => {
  * @param {HTMLElement} el HTML custom element.
  */
 let handleExtraction = (e) => {
+  /**
+   * Consume click event dispatched after long press when event is generated from HTML custom element.
+   * isTrusted is true when mlextraction event is dispatched from HTML element.
+   */
+  if (e.isTrusted) {
+    /**
+     * Consume click event dispatched by API after long press.
+     */
+    window.addEventListener('click',  e => e.stopPropagation(), { once: true, capture: true });
+  }
+
   /**
    * Assign element to local variable.
    */
@@ -149,8 +161,7 @@ let handleExtraction = (e) => {
     /**
      * Dispatch pre node-extracted synthetic event.
      */
-    let event = new Event('extracting-node');
-    el.dispatchEvent(event);
+    el.dispatchEvent(new Event('extracting-node'));
 
     /**
      * Set the node in middle of main transform.
@@ -182,11 +193,6 @@ let handleExtraction = (e) => {
      * Provide Matrix and size of the node to be extracted.
      */
     doExtraction(el, transformMatrix, {width:eWidth, height:eHeight, breadth: eBreadth});
-
-    /**
-     * Consume click event dispatched by API after long press.
-     */
-    el.addEventListener('click', event => event.stopImmediatePropagation(), {once:true});
 
     /**
      * Resize node back to original in main Transform.
@@ -236,9 +242,46 @@ let doExtraction = (el, transformMatrix, eSize) => {
   }
 
   /**
-   * Make the extracted volume size the largest of width, height and breadth.
+   * If node rotation in any of the axes, calculate size of volume hosting the node after rotation.
    */
-  let extractedVolumeSize = Math.max(eSize.width, eSize.height, eSize.breadth) + VOLUME_GAP;
+  if (el._transform.getLocalRotation().some(angle => angle !== 0)) {
+    /**
+     * Get the quaternion rotation from transform and convert to axes angles.
+     */
+    let rotationAngleArr = quaternionToAngle(el._transform.getLocalRotation());
+
+    /**
+     * Substract angle from PI if angle between PI/2 - PI OR 3PI/2 - 2PI
+     */
+    rotationAngleArr = rotationAngleArr.map(angle => ((angle > Math.PI * 0.5 && angle < Math.PI) || (angle > Math.PI * 1.5 && angle < Math.PI * 2)) ? Math.PI - angle : angle);
+
+    // roation on x axes
+    if (rotationAngleArr[0]) {
+      let breadth = Math.abs(Math.sin(rotationAngleArr[0]) * eSize.height + Math.cos(rotationAngleArr[0]) * eSize.breadth);
+      let height = Math.abs(Math.sin(rotationAngleArr[0]) * eSize.breadth + Math.cos(rotationAngleArr[0]) * eSize.height);
+
+      eSize.breadth = Math.max(eSize.breadth, breadth);
+      eSize.height = Math.max(eSize.height, height);
+    }
+
+    // roation on y axes
+    if (rotationAngleArr[1]) {
+      let width = Math.abs(Math.sin(rotationAngleArr[1]) * eSize.breadth + Math.cos(rotationAngleArr[1]) * eSize.width);
+      let breadth = Math.abs(Math.sin(rotationAngleArr[1]) * eSize.width + Math.cos(rotationAngleArr[1]) * eSize.breadth);
+
+      eSize.width = Math.max(eSize.width, width);
+      eSize.breadth = Math.max(eSize.breadth, breadth);
+    }
+
+    // roation on z
+    if (rotationAngleArr[2]) {
+      let width = Math.abs(Math.sin(rotationAngleArr[2]) * eSize.height + Math.cos(rotationAngleArr[2]) * eSize.width);
+      let height = Math.abs(Math.sin(rotationAngleArr[2]) * eSize.width + Math.cos(rotationAngleArr[2]) * eSize.height);
+
+      eSize.width = Math.max(eSize.width, width);
+      eSize.height = Math.max(eSize.height, height);
+    }
+  }
 
   /**
    * Extract content with dictionary manifest
@@ -248,16 +291,15 @@ let doExtraction = (el, transformMatrix, eSize) => {
     transform: transformMatrix,
     doIt: "auto",
     origin_url: path,
-    width: extractedVolumeSize,
-    height: extractedVolumeSize,
-    breadth: extractedVolumeSize
+    width: eSize.width + VOLUME_GAP,
+    height: eSize.height + VOLUME_GAP,
+    breadth: eSize.breadth + VOLUME_GAP
   });
 
   /**
    * Dispatch node-extracted synthetic event.
    */
-  let event = new Event('node-extracted');
-  el.dispatchEvent(event);
+  el.dispatchEvent(new Event('node-extracted'));
 }
 
 export { setNodeExtraction, unsetNodeExtraction }

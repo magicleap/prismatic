@@ -125,16 +125,15 @@ let createVolume = (el) => {
     }
   });
 
-
+  /**
+   * Listen for mlextraction event and dispatch custom mlextraction event from HTML custom element to handle extraction.
+   */
   volume.addEventListener("mlextraction", (event) => {
     if (event.targetNode && event.targetNode.htmlElement) {
       let el = event.targetNode.htmlElement;
-
-      var mlextractionEvent = new Event('mlextraction');
-      el.dispatchEvent(mlextractionEvent);
+      el.dispatchEvent(new Event('mlextraction'));
     }
   });
-
 
   return volume;
 };
