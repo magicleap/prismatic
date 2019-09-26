@@ -93,7 +93,7 @@ let createVolume = (el) => {
        */
       let node = (el._model ? el._model : el._quad);
 
-      if (node.visible) {
+      if (node && node.visible) {
         /**
          * Differentiate between control and headpos raycast.
          */

@@ -17,23 +17,25 @@ let setMutationObserver = (el) => {
          */
         let node = (mutation.target._model ? mutation.target._model : mutation.target._quad);
 
-        /**
-         * Hide node when css visibility hidden and node is visible and there is no visibility attribute in HTML custom element.
-         */
-        if (!isElementVisible(el) && node.visible && !el.hasAttribute('visibility')) {
-          node.visible = false;
-        }
-        /**
-         * Show node when css visibility is visible and node is hidden and there is no visibility attribute in HTML custom element.
-         */
-        else if (isElementVisible(el) && !node.visible && !el.hasAttribute('visibility')) {
-          node.visible = true;
-        }
+        if (node) {
+          /**
+           * Hide node when css visibility hidden and node is visible and there is no visibility attribute in HTML custom element.
+           */
+          if (!isElementVisible(el) && node.visible && !el.hasAttribute('visibility')) {
+            node.visible = false;
+          }
+          /**
+           * Show node when css visibility is visible and node is hidden and there is no visibility attribute in HTML custom element.
+           */
+          else if (isElementVisible(el) && !node.visible && !el.hasAttribute('visibility')) {
+            node.visible = true;
+          }
 
-        /**
-         * Update and possition
-         */
-        setNodePosition(mutation.target);
+          /**
+           * Update and possition
+           */
+          setNodePosition(mutation.target);
+        }
       });
     });
 
