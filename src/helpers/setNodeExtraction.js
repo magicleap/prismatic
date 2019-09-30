@@ -250,15 +250,10 @@ let doExtraction = (el, transformMatrix, eSize) => {
      */
     let rotationAngleArr = quaternionToAngle(el._transform.getLocalRotation());
 
-    /**
-     * Substract angle from PI if angle between PI/2 - PI OR 3PI/2 - 2PI
-     */
-    rotationAngleArr = rotationAngleArr.map(angle => ((angle > Math.PI * 0.5 && angle < Math.PI) || (angle > Math.PI * 1.5 && angle < Math.PI * 2)) ? Math.PI - angle : angle);
-
     // roation on x axes
     if (rotationAngleArr[0]) {
-      let breadth = Math.abs(Math.sin(rotationAngleArr[0]) * eSize.height + Math.cos(rotationAngleArr[0]) * eSize.breadth);
-      let height = Math.abs(Math.sin(rotationAngleArr[0]) * eSize.breadth + Math.cos(rotationAngleArr[0]) * eSize.height);
+      let breadth = Math.abs(Math.sin(rotationAngleArr[0])) * eSize.height + Math.abs(Math.cos(rotationAngleArr[0])) * eSize.breadth;
+      let height = Math.abs(Math.sin(rotationAngleArr[0])) * eSize.breadth + Math.abs(Math.cos(rotationAngleArr[0])) * eSize.height;
 
       eSize.breadth = Math.max(eSize.breadth, breadth);
       eSize.height = Math.max(eSize.height, height);
@@ -266,8 +261,8 @@ let doExtraction = (el, transformMatrix, eSize) => {
 
     // roation on y axes
     if (rotationAngleArr[1]) {
-      let width = Math.abs(Math.sin(rotationAngleArr[1]) * eSize.breadth + Math.cos(rotationAngleArr[1]) * eSize.width);
-      let breadth = Math.abs(Math.sin(rotationAngleArr[1]) * eSize.width + Math.cos(rotationAngleArr[1]) * eSize.breadth);
+      let width = Math.abs(Math.sin(rotationAngleArr[1])) * eSize.breadth + Math.abs(Math.cos(rotationAngleArr[1])) * eSize.width;
+      let breadth = Math.abs(Math.sin(rotationAngleArr[1])) * eSize.width + Math.abs(Math.cos(rotationAngleArr[1])) * eSize.breadth;
 
       eSize.width = Math.max(eSize.width, width);
       eSize.breadth = Math.max(eSize.breadth, breadth);
@@ -275,8 +270,8 @@ let doExtraction = (el, transformMatrix, eSize) => {
 
     // roation on z
     if (rotationAngleArr[2]) {
-      let width = Math.abs(Math.sin(rotationAngleArr[2]) * eSize.height + Math.cos(rotationAngleArr[2]) * eSize.width);
-      let height = Math.abs(Math.sin(rotationAngleArr[2]) * eSize.width + Math.cos(rotationAngleArr[2]) * eSize.height);
+      let width = Math.abs(Math.sin(rotationAngleArr[2])) * eSize.height + Math.abs(Math.cos(rotationAngleArr[2])) * eSize.width;
+      let height = Math.abs(Math.sin(rotationAngleArr[2])) * eSize.width + Math.abs(Math.cos(rotationAngleArr[2])) * eSize.height;
 
       eSize.width = Math.max(eSize.width, width);
       eSize.height = Math.max(eSize.height, height);
