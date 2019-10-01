@@ -1,22 +1,7 @@
 /*!
  * @license
- * Copyright (c) 2019 Magic Leap, Inc. All Rights Reserved.
- * You may use this file to develop and test websites that are compatible with
- * Magic Leap’s mixed reality technology platform (including Magic Leap’s mixed
- * reality hardware device(s) manufactured by or on behalf of Magic Leap and
- * Magic Leap’s operating systems), and distribute this file as incorporated
- * into those websites.  You may not modify this file, or use this file to
- * directly or indirectly develop websites that are incompatible Magic Leap’s
- * mixed reality technology platform.
- *
- * TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, MAGIC LEAP IS PROVIDING
- * THIS FILE ON AN “AS-IS” BASIS FOR USE AT YOUR OWN RISK. MAGIC LEAP DISCLAIMS
- * ALL WARRANTIES WITH RESPECT TO THIS FILE, WHETHER EXPRESS OR IMPLIED, OR
- * STATUTORY, INCLUDING, WITHOUT LIMITATION, ANY WARRANTIES OF NON-INFRINGEMENT
- * OF THIRD-PARTY RIGHTS, MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
- * QUIET ENJOYMENT, NON-INTERFERENCE, SYSTEM INTEGRATION, OR ACCURACY.
- * MAGIC LEAP DOES NOT WARRANT THAT YOUR USE OF THIS FILE WILL BE UNINTERRUPTED
- * ERROR-FREE, VIRUS-FREE, OR SECURE.
+ * Copyright (c) 2018-present Magic Leap, Inc. All Rights Reserved.
+ * Distributed under Apache 2.0 License. See LICENSE file in the project root directory for full license information.
  */
 
 /* Modules */
