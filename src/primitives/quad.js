@@ -433,6 +433,17 @@ export class MlQuad extends HTMLElement {
     }
   }
 
+  /*** Stop animations. ***/
+
+  /**
+   * Stop all transform animations.
+   */
+  stopTransformAnimations() {
+    if (this._transform) {
+      this._transform.stopTransformAnimations()
+    }
+  }
+
   /*** Node effects. ***/
 
   /**

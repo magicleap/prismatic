@@ -492,6 +492,26 @@ export class MlModel extends HTMLElement {
     this.setAttribute('environment-lighting', v);
   }
 
+  /*** Stop animations. ***/
+
+  /**
+   * Stop all transform animations.
+   */
+  stopTransformAnimations() {
+    if (this._transform) {
+      this._transform.stopTransformAnimations()
+    }
+  }
+
+  /**
+   * Stop model animation.
+   */
+  stopModelAnimation() {
+    if (this._model) {
+      this._model.paused = true;
+    }
+  }
+
   /*** Node effects. ***/
 
   /**
