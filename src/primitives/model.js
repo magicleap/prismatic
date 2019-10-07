@@ -499,7 +499,7 @@ export class MlModel extends HTMLElement {
    */
   stopTransformAnimations() {
     if (this._transform) {
-      this._transform.stopTransformAnimations()
+      this._transform.stopTransformAnimations();
     }
   }
 
