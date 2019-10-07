@@ -1,4 +1,5 @@
 import { createVolume } from '../helpers/createVolume.js'
+import { pixelsToMetersSize } from '../utilities/pixelsToMetersSize.js';
 
 /**
  * ml-stage HTML Custom Element.
@@ -60,10 +61,22 @@ export class MlStage extends HTMLElement {
        */
       if (extentProp.length === 2) {
         let extentPropName = extentProp[0].trim();
-        let extentPropValue = extentProp[1].trim();
+        let extentPropValue = parseFloat(extentProp[1]);
 
-        //TODO: we need to validate measure units in meters, pixels, cm %
-        stageExtents[extentPropName] = parseFloat(extentPropValue.replace(/\r?\n| |\r|\t|,/gm, ''));
+        if (extentPropValue) {
+          /**
+           * Convert px or cm to meters.
+           */
+          let unitName = extentProp[1].trim().toString().replace(/[^A-Za-z]/g, "").toLowerCase();
+          if (unitName === 'cm') {
+            extentPropValue = extentPropValue * 0.01; //convert cm to meters
+          }
+          else if (unitName === 'px') {
+            extentPropValue = pixelsToMetersSize(extentPropValue); //convert px to meters
+          }
+
+          stageExtents[extentPropName] = extentPropValue;
+        }
       }
     });
 
