@@ -39,7 +39,7 @@ let fadeOut = (el, speed = 0.1) => {
    * RGB color.
    * Add alpha 1-0 to RGBA color code.
    */
-  if (el._volume.visible && node.color.charAt(0) !== '#')  {
+  if (node.visible && node.color.charAt(0) !== '#')  {
     /**
      * Get current color.
      */
