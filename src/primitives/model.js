@@ -169,7 +169,9 @@ export class MlModel extends HTMLElement {
             'model-animation-speed',
             'spin',
             'model-scale',
+            'scale',
             'scale-to',
+            'scale-by',
             'extracted-scale',
             'extracted-size',
             'extracted-link',
@@ -390,6 +392,16 @@ export class MlModel extends HTMLElement {
   }
 
   /**
+   * scale: Element's Property.
+   */
+  get scale() {
+    return this.getAttribute('scale');
+  }
+  set scale(v) {
+    this.setAttribute('scale', v);
+  }
+
+  /**
    * scaleTo: Element's Property.
    */
   get scaleTo() {
@@ -397,6 +409,16 @@ export class MlModel extends HTMLElement {
   }
   set scaleTo(v) {
     this.setAttribute('scale-to', v);
+  }
+
+  /**
+   * scaleBy: Element's Property.
+   */
+  get scaleBy() {
+    return this.getAttribute('scale-by');
+  }
+  set scaleBy(v) {
+    this.setAttribute('scale-by', v);
   }
 
   /**

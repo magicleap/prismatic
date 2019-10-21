@@ -1,4 +1,5 @@
 import { getCoordinates } from '../utilities/getCoordinates.js';
+import { resetOriginalSizePosition } from '../utilities/resetOriginalSizePosition.js';
 
 /**
  * Position the node on top of its HTMl Custom Element.
@@ -12,6 +13,9 @@ let setNodePosition = (el) => {
      */
     let { positionX, positionY, positionZ } = getCoordinates(el);
     el._mainTransform.setLocalPosition(new Float32Array([positionX, positionY, positionZ]));
+
+    /* Reset hover effect properties set on setHoverState module.*/
+    resetOriginalSizePosition(el);
   }
 }
 

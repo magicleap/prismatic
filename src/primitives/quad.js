@@ -158,7 +158,6 @@ export class MlQuad extends HTMLElement {
    */
   static get observedAttributes() {
     return ['extractable',
-            'scale-scroll',
             'breadth',
             'color',
             'visibility',
@@ -168,7 +167,9 @@ export class MlQuad extends HTMLElement {
             'rotate-by-angles',
             'spin',
             'quad-scale',
+            'scale',
             'scale-to',
+            'scale-by',
             'extracted-scale',
             'extracted-size',
             'extracted-link',
@@ -341,6 +342,16 @@ export class MlQuad extends HTMLElement {
   }
 
   /**
+   * scale: Element's Property.
+   */
+  get scale() {
+    return this.getAttribute('scale');
+  }
+  set scale(v) {
+    this.setAttribute('scale', v);
+  }
+
+  /**
    * scaleTo: Element's Property.
    */
   get scaleTo() {
@@ -348,6 +359,16 @@ export class MlQuad extends HTMLElement {
   }
   set scaleTo(v) {
     this.setAttribute('scale-to', v);
+  }
+
+  /**
+   * scaleBy: Element's Property.
+   */
+  get scaleBy() {
+    return this.getAttribute('scale-by');
+  }
+  set scaleBy(v) {
+    this.setAttribute('scale-by', v);
   }
 
   /**

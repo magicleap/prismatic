@@ -4,6 +4,7 @@ import { setRotation as setModelRotation } from '../helpers/setRotation.js';
 import { setModelAnimation, setModelAnimationSpeed } from '../helpers/setModelAnimation.js';
 import { setSpin as setModelSpin } from '../helpers/setSpin.js';
 import { setScaleTo as setModelScaleTo } from '../helpers/setScaleTo.js';
+import { setScaleBy as setModelScaleBy } from '../helpers/setScaleBy.js';
 import { setMoveTo as setModelMoveTo } from '../helpers/setMoveTo.js';
 import { setMoveBy as setModelMoveBy } from '../helpers/setMoveBy.js';
 import { setRotateToAngles as setModelRotateToAngles } from '../helpers/setRotateToAngles.js';
@@ -18,7 +19,7 @@ import { isElementVisible } from '../utilities/isElementVisible.js';
 
 /**
  * Set attributes: extractable, color, environment lighting, skipRaycast, visibility, model scale,
- * rotation, animation, spin, scaleTo, moveTo, moveBy, rotateToAngles, rotateByAngles, breadth, z-offset.
+ * rotation, animation, spin, scaleTo, scaleBy, moveTo, moveBy, rotateToAngles, rotateByAngles, breadth, z-offset.
  * @param {HTMLElement} el HTML custom element.
  * @param {JSONObject} elemAttributes Attribute name and value to be set.
  */
@@ -99,7 +100,17 @@ let setModelAttributes = (el, elemAttributes) => {
     if (elemAttributes['model-scale']) {
       setModelScale(el, elemAttributes['model-scale']);
 
-      /* Reset properties set on setHoverState module.*/
+      /* Reset hover effect properties set on setHoverState module.*/
+      resetOriginalSizePosition(el);
+    }
+
+    /**
+     * Set model scale.
+     */
+    if (elemAttributes['scale']) {
+      setModelScale(el, elemAttributes['scale']);
+
+      /* Reset hover effect properties set on setHoverState module.*/
       resetOriginalSizePosition(el);
     }
 
@@ -137,7 +148,17 @@ let setModelAttributes = (el, elemAttributes) => {
     if (elemAttributes['scale-to']) {
       setModelScaleTo(el, elemAttributes['scale-to']);
 
-      /* Reset properties set on setHoverState module.*/
+      /* Reset hover effect properties set on setHoverState module.*/
+      resetOriginalSizePosition(el);
+    }
+
+    /**
+     * Set model scale by.
+     */
+    if (elemAttributes['scale-by']) {
+      setModelScaleBy(el, elemAttributes['scale-by']);
+
+      /* Reset hover effect properties set on setHoverState module.*/
       resetOriginalSizePosition(el);
     }
 
@@ -154,7 +175,7 @@ let setModelAttributes = (el, elemAttributes) => {
     if (elemAttributes['move-by']) {
       setModelMoveBy(el, elemAttributes['move-by']);
 
-      /* Reset properties set on setHoverState module.*/
+      /* Reset hover effect properties set on setHoverState module.*/
       resetOriginalSizePosition(el);
     }
 

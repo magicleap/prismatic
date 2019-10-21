@@ -3,6 +3,7 @@ import { setScale as setQuadScale } from '../helpers/setScale.js';
 import { setRotation as setQuadRotation } from '../helpers/setRotation.js';
 import { setSpin as setQuadSpin } from '../helpers/setSpin.js';
 import { setScaleTo as setQuadScaleTo } from '../helpers/setScaleTo.js';
+import { setScaleBy as setQuadScaleBy } from '../helpers/setScaleBy.js';
 import { setMoveTo as setQuadMoveTo } from '../helpers/setMoveTo.js';
 import { setMoveBy as setQuadMoveBy } from '../helpers/setMoveBy.js';
 import { setRotateToAngles as setQuadRotateToAngles } from '../helpers/setRotateToAngles.js';
@@ -17,7 +18,7 @@ import { isElementVisible } from '../utilities/isElementVisible.js';
 
 /**
  * Set attributes: extractable, color, environment lighting, raycast, visibility, scale,
- * rotation, spin, scaleTo, moveTo, moveBy, rotateToAngles, rotateByAngles, breadth, z-offset.
+ * rotation, spin, scaleTo, scaleBy, moveTo, moveBy, rotateToAngles, rotateByAngles, breadth, z-offset.
  * @param {HTMLElement} el HTML custom element.
  * @param {JSONObject} elemAttributes Attribute name and value to be set.
  */
@@ -104,7 +105,17 @@ let setQuadAttributes = (el, elemAttributes) => {
     if (elemAttributes['quad-scale']) {
       setQuadScale(el, elemAttributes['quad-scale']);
 
-      /* Reset properties set on setHoverState module.*/
+      /* Reset hover effect properties set on setHoverState module.*/
+      resetOriginalSizePosition(el);
+    }
+
+    /**
+     * Set quad scale.
+     */
+    if (elemAttributes['scale']) {
+      setQuadScale(el, elemAttributes['scale']);
+
+      /* Reset hover effect properties set on setHoverState module.*/
       resetOriginalSizePosition(el);
     }
 
@@ -128,9 +139,20 @@ let setQuadAttributes = (el, elemAttributes) => {
     if (elemAttributes['scale-to']) {
       setQuadScaleTo(el, elemAttributes['scale-to']);
 
-      /* Reset properties set on setHoverState module.*/
+      /* Reset hover effect properties set on setHoverState module.*/
       resetOriginalSizePosition(el);
     }
+
+    /**
+     * Set quad scale by.
+     */
+    if (elemAttributes['scale-by']) {
+      setQuadScaleBy(el, elemAttributes['scale-by']);
+
+      /* Reset hover effect properties set on setHoverState module.*/
+      resetOriginalSizePosition(el);
+    }
+
 
     /**
      * Set quad move to.
@@ -138,7 +160,7 @@ let setQuadAttributes = (el, elemAttributes) => {
     if (elemAttributes['move-to']) {
       setQuadMoveTo(el, elemAttributes['move-to']);
 
-      /* Reset properties set on setHoverState module.*/
+      /* Reset hover effect properties set on setHoverState module.*/
       resetOriginalSizePosition(el);
     }
 
@@ -148,7 +170,7 @@ let setQuadAttributes = (el, elemAttributes) => {
     if (elemAttributes['move-by']) {
       setQuadMoveBy(el, elemAttributes['move-by']);
 
-      /* Reset properties set on setHoverState module.*/
+      /* Reset hover effect properties set on setHoverState module.*/
       resetOriginalSizePosition(el);
     }
 

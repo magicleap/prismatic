@@ -75,6 +75,16 @@ let createVolume = (el) => {
   });
 
   /**
+   * Listen for mlextraction event and dispatch custom mlextraction event from HTML custom element to handle extraction.
+   */
+  volume.addEventListener("mlextraction", (event) => {
+    if (event.targetNode && event.targetNode.htmlElement) {
+      let el = event.targetNode.htmlElement;
+      el.dispatchEvent(new Event('mlextraction'));
+    }
+  });
+
+  /**
    * Listen for mlraycast event and dispatch custom event for node from HTML custom element when node is visible.
    * Add inputType property to custom event to differentiate between control and headpos raycast.
    * Dispatch mouseover, mouseout, mousemove from HTLM custome element to handle hover effect on extractable node.
@@ -105,10 +115,6 @@ let createVolume = (el) => {
             let mouseoverEvent = new MouseEvent('mouseover', { view: window, bubbles: true, cancelable: true });
             el.dispatchEvent(mouseoverEvent);
           }
-          else if (eventType === 'nodeOnControlMove') {
-            let mousemoveEvent = new MouseEvent('mousemove', { view: window, bubbles: true, cancelable: true });
-            el.dispatchEvent(mousemoveEvent);
-          }
           else if (eventType === 'nodeOnControlExit') {
             let mouseoutEvent = new MouseEvent('mouseout', { view: window, bubbles: true, cancelable: true });
             el.dispatchEvent(mouseoutEvent);
@@ -117,21 +123,12 @@ let createVolume = (el) => {
         else if (eventType.search(/head/i) >= 0) {
           inputype = 'headpos';
         }
+
         if (event.hitData.type === 'quadNode' || event.hitData.type === 'modelNode'){
           let newRaycastEvent = new CustomEvent('node-raycast', { detail: { inputType: inputype, type: eventType, hitData: event.hitData }});
           el.dispatchEvent(newRaycastEvent);
         }
       }
-    }
-  });
-
-  /**
-   * Listen for mlextraction event and dispatch custom mlextraction event from HTML custom element to handle extraction.
-   */
-  volume.addEventListener("mlextraction", (event) => {
-    if (event.targetNode && event.targetNode.htmlElement) {
-      let el = event.targetNode.htmlElement;
-      el.dispatchEvent(new Event('mlextraction'));
     }
   });
 

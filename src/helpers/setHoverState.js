@@ -38,9 +38,20 @@ let unsetHoverState = (el) => {
 };
 
 /**
- * Handle mouseover event on an extractable node.
+ * Debounce mouseover event on an extractable node.
  */
 let handleHoverStateMouseOverListener = (e) => {
+  /**
+   * Debounce mouseover event to 250ms.
+   */
+  clearTimeout(e.target._mouseoverTimeoutId);
+  e.target._mouseoverTimeoutId = setTimeout(() => handleHoverStateMouseOver(e), 250);
+}
+
+/**
+ * Handle mouseover event on an extractable node.
+ */
+let handleHoverStateMouseOver = (e) => {
   /**
    * Assign element to local variable.
    */
@@ -52,18 +63,14 @@ let handleHoverStateMouseOverListener = (e) => {
   let node = (el._model ? el._model : el._quad);
 
   /**
-   * If the original position on Z is different from the current position on Z then mouse over effect already happened.
+   * Get the volume.
    */
-  if (el._originalPosition && el._originalPosition[2] !== el._mainTransform.getLocalPosition()[2]) {
-   return;
-  }
+  let volume = mlWorld[0];
 
-  if (node && node.visible) {
-    /**
-     * Get the volume.
-     */
-    let volume = mlWorld[0];
-
+  /**
+   * Handle mouseover if volume and node is visible and last hover event was not a mouseover.
+   */
+  if (volume && volume.visible && node && node.visible && el._lastHoverEvent !== 'mouseover') {
     /**
      * Send control haptic tick on hover.
      */
@@ -94,13 +101,33 @@ let handleHoverStateMouseOverListener = (e) => {
      * Set mouseover node move z-position.
      */
     el._mainTransform.moveTo(new Float32Array([el._originalPosition[0], el._originalPosition[1], (el._originalPosition[2] + MOUSE_OVER_Z_MOVE)]), 0.1, -2);
+
+    /**
+     * Record last hover event.
+     */
+    el._lastHoverEvent = 'mouseover';
+    /**
+     * Record if last event was generated from HTML element.
+     */
+    el._lastHoverEventHtml = e.isTrusted;
   }
+}
+
+/**
+ * Debounce mouseout event on an extractable node.
+ */
+let handleHoverStateMouseOutListener = (e) => {
+  /**
+   * Debounce mouseout event to 250ms.
+   */
+  clearTimeout(e.target._mouseoutTimeoutId);
+  e.target._mouseoutTimeoutId = setTimeout(() => handleHoverStateMouseOut(e), 250);
 }
 
 /**
  * Handle mouseout event on an extractable node.
  */
-let handleHoverStateMouseOutListener = (e) => {
+let handleHoverStateMouseOut = (e) => {
   /**
    * Assign element to local variable.
    */
@@ -112,17 +139,20 @@ let handleHoverStateMouseOutListener = (e) => {
   let node = (el._model ? el._model : el._quad);
 
   /**
-   * If the original position on Z is the same as the current position on Z then reset of mouse over effect already happened.
+   * Get the volume.
    */
-  if (el._originalPosition && el._originalPosition[2] === el._mainTransform.getLocalPosition()[2]) {
-   return;
-  }
+  let volume = mlWorld[0];
 
-  if (node) {
+  /**
+   * Handle mouseover event if node and last hover event event was not a mouseout.
+   */
+  if (node && el._lastHoverEvent === 'mouseover') {
     /**
-     * Get the volume.
+     * Don't handle mouseout effect when last mouseover event was generated from HTML and current mouseout event is from raycast.
      */
-    let volume = mlWorld[0];
+    if (el._lastHoverEventHtml && !e.isTrusted) {
+      return;
+    }
 
     /**
      * Send control haptic vibe on hover.
@@ -144,6 +174,15 @@ let handleHoverStateMouseOutListener = (e) => {
     if (el._originalScale) {
       el._mainTransform.scaleTo(new Float32Array([el._originalScale[0], el._originalScale[1], el._originalScale[2]]), 0.1, -2);
     }
+
+    /**
+     * Record last hover event.
+     */
+    el._lastHoverEvent = 'mouseout';
+    /**
+     * Record if last event was generated from HTML element.
+     */
+    el._lastHoverEventHtml = e.isTrusted;
   }
 }
 

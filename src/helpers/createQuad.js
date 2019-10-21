@@ -90,12 +90,15 @@ let createQuad = (el, texture) => {
   let elemAttributes = {
     trigger: el.getAttribute('trigger'),
     color: el.getAttribute('color'),
+    raycast: el.getAttribute('raycast'),
     'quad-scale': el.getAttribute('quad-scale'),
+    'scale': el.getAttribute('scale'),
     rotation: el.getAttribute('rotation'),
     'rotate-to-angles': el.getAttribute('rotate-to-angles'),
     'rotate-by-angles': el.getAttribute('rotate-by-angles'),
     spin: el.getAttribute('spin'),
     'scale-to': el.getAttribute('scale-to'),
+    'scale-by': el.getAttribute('scale-by'),
     'move-to': el.getAttribute('move-to'),
     'move-by': el.getAttribute('move-by'),
     'environment-lighting': el.getAttribute('environment-lighting')
