@@ -56,6 +56,13 @@ export class MlModel extends HTMLElement {
     }
 
     /**
+     * When CSS display is not specified, set CSS display to inline-block.
+     */
+    if (!this.style.display) {
+      this.style.display = 'inline-block';
+    }
+
+    /**
      * If node has extractable flag, set hover and extract.
      */
     if (this.extractable) {
