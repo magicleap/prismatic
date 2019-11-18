@@ -112,9 +112,17 @@ export class MlQuad extends HTMLElement {
     if (this.src) {
       /**
        * Check for Volume.
-       * If no Volume, create bounded volume.
+       * If no Volume, reset stage and create bounded volume.
        */
       if (mlWorld.length === 0) {
+        /**
+         * Reset stage.
+         */
+        window.mlWorld.resetStageExtent();
+
+        /**
+         * Create volume.
+         */
         createVolume(this);
       }
 

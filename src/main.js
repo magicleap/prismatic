@@ -15,11 +15,6 @@ import { mainStageChangedListener } from './helpers/mainStageChangedListener.js'
  */
 if (window.mlWorld) {
   /**
-   * Reset stage.
-   */
-  window.mlWorld.resetStageExtent();
-
-  /**
    * Listen for stage resize event to reposition and resize the JS Volume.
    */
   document.addEventListener('mlstage', mainStageChangedListener);

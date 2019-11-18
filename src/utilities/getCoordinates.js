@@ -1,4 +1,5 @@
 import { pixelsToMetersSize } from '../utilities/pixelsToMetersSize.js';
+import { DEFULT_Z_OFFSET } from '../utilities/constants.js';
 
 /**
  * Calculate coordinates using DOM element's X and Y coordinates.
@@ -41,7 +42,7 @@ let getYCoordinate = (value) => {
   return Math.fround(y);
 }
 
-let getZCoordinate = (value) => {
+let getZCoordinate = (value = DEFULT_Z_OFFSET) => {
   let z = pixelsToMetersSize(value);
   return Math.fround(z);
 }
