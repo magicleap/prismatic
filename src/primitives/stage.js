@@ -19,7 +19,7 @@ export class MlStage extends HTMLElement {
 
     /**
      * Check for Volume.
-     * If no Volume, reset stage and create bounded volume.
+     * If no volume, reset stage and create volume.
      */
     if (mlWorld.length === 0) {
       /**

@@ -20,10 +20,14 @@ if (window.mlWorld) {
   document.addEventListener('mlstage', mainStageChangedListener);
 
   /**
+   * Listen for page orientation event to rotate and reposition the JS Volume.
+   */
+  document.addEventListener("mlpageorientation", mainStageChangedListener);
+
+  /**
    * Animate at 60FPS by calling mlWorld.update();
    */
   setInterval (() => window.mlWorld.update(), 16);
-
 }
 else {
   console.warn("Unable to render content: No mixed-reality browser detected.");
