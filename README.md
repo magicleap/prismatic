@@ -16,7 +16,7 @@ To add the minified version:
 <script src="https://unpkg.com/@magicleap/prismatic"></script>
 ```
 
-See our [Prismatic documentation] (https://magicleaphelio.com/docs).
+See our [Prismatic documentation](https://magicleaphelio.com/docs).
 
 For more information and guides are available on Magic Leap's [Creator Portal](https://creator.magicleap.com/learn/guides/helio).
 
