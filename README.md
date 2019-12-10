@@ -15,15 +15,19 @@ To add the minified version:
 <script src="https://unpkg.com/@magicleap/prismatic"></script>
 ```
 
+The source code for Prismatic is also hosted in a repository on [GitHub](https://github.com/MagicLeap/prismatic).
+
 See our [Prismatic documentation](https://magicleaphelio.com/docs).
 
 For more information and guides are available on Magic Leap's [Developer Portal](https://developer.magicleap.com/learn/guides/helio).
 
 For live samples and code snippets, highlighting the Web Platform's core features, checkout the Developer Samples website [here](https://magicleaphelio.com/devsamples).
 
+
 ## What's New
+- A major optimization of the Prismatic JS library
 - Faster model loading
 - Model instancing
 - Models scroll with page
 - Models can be extracted with raycast: Users no longer have to be interacting with the parent element on the page to extract them.
-- **&lt;stage>** tag: Devs can specify how much space their experience will take up. 
+- **&lt;stage>** tag: Devs can specify how much space their experience will take up.
