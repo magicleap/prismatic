@@ -295,6 +295,25 @@
       });
     }
 
+    /**
+     * Set names of attributes to observe.
+     */
+    static get observedAttributes() {
+      return ['extents'];
+    }
+
+    /**
+     * An attribute was added, removed, or updated.
+     */
+    attributeChangedCallback(name, oldValue, newValue) {
+      if (window.mlWorld && mlWorld[0]) {
+        /**
+         * Requested Stage.
+         */
+        this.requestStageExtents();
+      }
+    }
+
     /*** Element's Properties. ***/
 
     /**
@@ -594,16 +613,16 @@
    * @returns {number[]} Rotation in quaternion.
    */
   let angleToQuaternion = (angleArray) => {
-  	let c1 = Math.cos(angleArray[0] / 2),
+    let c1 = Math.cos(angleArray[0] / 2),
         c2 = Math.cos(angleArray[1] / 2),
         c3 = Math.cos(angleArray[2] / 2),
         s1 = Math.sin(angleArray[0] / 2),
         s2 = Math.sin(angleArray[1] / 2),
         s3 = Math.sin(angleArray[2] / 2),
-  			w = c1 * c2 * c3 + s1 * s2 * s3,
-  	    x = s1 * c2 * c3 - c1 * s2 * s3,
-  	    y = c1 * s2 * c3 + s1 * c2 * s3,
-  	    z = c1 * c2 * s3 - s1 * s2 * c3;
+        w = c1 * c2 * c3 + s1 * s2 * s3,
+        x = s1 * c2 * c3 - c1 * s2 * s3,
+        y = c1 * s2 * c3 + s1 * c2 * s3,
+        z = c1 * c2 * s3 - s1 * s2 * c3;
 
     return [x, y, z, w];
   };
@@ -1096,10 +1115,10 @@
   };
 
   /**
-    * The move-by attribute value is validated, parsed, converted to meters and added to transform.moveBy().
-  	* @param {HTMLElement} el HTML custom element.
-    * @param {string} moveByAttributeValue Attribute moveBy value.
-    */
+   * The move-by attribute value is validated, parsed, converted to meters and added to transform.moveBy().
+   * @param {HTMLElement} el HTML custom element.
+   * @param {string} moveByAttributeValue Attribute moveBy value.
+   */
   let setMoveBy = (el, moveByAttributeValue) => {
     if (moveByAttributeValue) {
       /**
@@ -1247,12 +1266,12 @@
     /**
      * Extract node.
      */
-    if (node && node.visible) {
+    if (node) {
       /**
        * Set model size to original (before mouse hoverover effect).
        */
       if (el._originalScale) {
-        el._mainTransform.setLocalScale(new Float32Array([el._originalScale[0], el._originalScale[1], el._originalScale[2]]));
+        node.setLocalScale(new Float32Array([el._originalScale[0], el._originalScale[1], el._originalScale[2]]));
       }
 
       /**
@@ -1261,6 +1280,11 @@
       if (el._originalPosition) {
         el._mainTransform.setLocalPosition(new Float32Array([el._originalPosition[0], el._originalPosition[1], el._originalPosition[2]]));
       }
+
+      /**
+       * Get current node postion.
+       */
+      let [nodePositionX, nodePositionY, nodePositionZ] = node.getLocalPosition();
 
       /**
        * Get current postion in main transform.
@@ -1283,81 +1307,117 @@
       let [mainTransformScaleWidth, mainTransformScaleHeight, mainTransformScaleBreadth] = el._mainTransform.getLocalScale();
 
       /**
+       * Get animation transform scale.
+       */
+      let [aniTransformScaleWidth, aniTransformScaleHeight, aniTransformScaleBreadth] = el._transform.getLocalScale();
+
+      /**
        * Get current size of the node. To be used for volume of extracted node.
        */
       let currentNodeWidth, currentNodeHeight, currentNodeBreadth;
       if (el._model) {
-        [currentNodeWidth, currentNodeHeight, currentNodeBreadth] = [el._resource.width * nodeScaleWidth * mainTransformScaleWidth, el._resource.height * nodeScaleHeight * mainTransformScaleHeight, el._resource.depth * nodeScaleBreadth * mainTransformScaleBreadth];
+        [currentNodeWidth, currentNodeHeight, currentNodeBreadth] = [el._resource.width * nodeScaleWidth * mainTransformScaleWidth * aniTransformScaleWidth, el._resource.height * nodeScaleHeight * mainTransformScaleHeight * aniTransformScaleHeight, el._resource.depth * nodeScaleBreadth * mainTransformScaleBreadth * aniTransformScaleBreadth];
       } else if (el._quad) {
-        [currentNodeWidth, currentNodeHeight, currentNodeBreadth] = [nodeScaleWidth * mainTransformScaleWidth, nodeScaleHeight * mainTransformScaleHeight, nodeScaleBreadth * mainTransformScaleBreadth];
+        [currentNodeWidth, currentNodeHeight, currentNodeBreadth] = [nodeScaleWidth * mainTransformScaleWidth * aniTransformScaleWidth, nodeScaleHeight * mainTransformScaleHeight * aniTransformScaleHeight, nodeScaleBreadth * mainTransformScaleBreadth * aniTransformScaleBreadth];
       }
 
       /**
-       * Assign current size to eSise which is used to set the extracted volume size.
+       * Assign current size to variables to be used to set the extracted volume size.
        */
       let [eWidth, eHeight, eBreadth] = [currentNodeWidth, currentNodeHeight, currentNodeBreadth];
 
       /**
+       * Calculated scale to get to extracted-size.
+       */
+      let calculatedScale = 0;
+
+      /**
        * Set the node size to extracted size attribute value.
        */
-      if (el.extractedSize) {
+      if (el.hasAttribute('extracted-size')) {
         /**
          * Get the extracted size and validate value.
          */
-        [eWidth, eHeight, eBreadth] = el.extractedSize.replace(/  +/g, ' ').split(' ').map(parseFloat);
+        let [eWidthTmp, eHeightTmp, eBreadthTmp] = el.getAttribute('extracted-size').replace(/  +/g, ' ').split(' ').map(parseFloat);
 
         /**
          * When breadth is not available, use the min of extracted width and height size for models or 0.001 for quads.
          */
-        if (isNaN(eBreadth)) {
-          eBreadth = (el._quad) ? VOLUME_GAP : Math.min(eWidth, eHeight);
+        if (isNaN(eBreadthTmp)) {
+          eBreadthTmp = (el._quad) ? VOLUME_GAP : Math.min(eWidthTmp, eHeightTmp);
         }
 
         /**
          * Validate extracted size values.
          */
-        if (isNaN(eWidth) || isNaN(eHeight) || isNaN(eBreadth)) {
+        if (isNaN(eWidthTmp) || isNaN(eHeightTmp) || isNaN(eBreadthTmp)) {
           console.warn(`Invalid value used for extracted-size attribute.`);
-          return;
         }
+        else {
+          /**
+           * Assign extracted size to variables to be used to set the extracted volume size.
+           */
+          [eWidth, eHeight, eBreadth] = [eWidthTmp, eHeightTmp, eBreadthTmp];
 
-        /**
-         * Calculate scale to get to extracted-size.
-         */
-        let scaleToExtractedSizeWidth = eWidth / currentNodeWidth;
-        let scaleToExtractedSizeHeight = eHeight / currentNodeHeight;
-        let scaleToExtractedSizeBreadth = eBreadth / currentNodeBreadth;
+          /**
+           * Calculate scale to get to extracted-size.
+           */
+          let scaleToExtractedSizeWidth = eWidth / currentNodeWidth;
+          let scaleToExtractedSizeHeight = eHeight / currentNodeHeight;
+          let scaleToExtractedSizeBreadth = eBreadth / currentNodeBreadth;
 
-        /**
-         * Calculate minumun scale to uniformly scale model to match current dimensions on page.
-         */
-        let scaleDownRatio = Math.min(currentNodeWidth / eWidth, currentNodeHeight / eHeight);
+          /**
+           * Calculate minumun scale to uniformly scale model to match current dimensions on page.
+           */
+          let scaleDownRatio = Math.min(currentNodeWidth / eWidth, currentNodeHeight / eHeight);
 
-        /**
-         * When scaling down, multiply the scaleDownRatio to transform and assign the oposite to extracted scale.
-         * Get the new size of scale down node to calculate the extracted volume size (doExtraction).
-         * This is done so the extracted model appears with the same size as the model on the page and then it will scale up.
-         */
-        if (scaleDownRatio < 1) {
-          scaleToExtractedSizeWidth *= scaleDownRatio;
-          scaleToExtractedSizeHeight *= scaleDownRatio;
-          scaleToExtractedSizeBreadth *= scaleDownRatio;
+          /**
+           * When scaling down, multiply the scaleDownRatio to transform and assign the opposite to extracted scale.
+           * Get the new size of scale down node to calculate the extracted volume size (doExtraction).
+           * This is done so the extracted model appears with the same size as the model on the page and then it will scale up.
+           */
+          if (scaleDownRatio < 1) {
+            scaleToExtractedSizeWidth *= scaleDownRatio;
+            scaleToExtractedSizeHeight *= scaleDownRatio;
+            scaleToExtractedSizeBreadth *= scaleDownRatio;
 
-          [eWidth, eHeight, eBreadth] = [currentNodeWidth * scaleToExtractedSizeWidth, currentNodeHeight * scaleToExtractedSizeHeight, currentNodeBreadth * scaleToExtractedSizeBreadth];
+            [eWidth, eHeight, eBreadth] = [currentNodeWidth * scaleToExtractedSizeWidth, currentNodeHeight * scaleToExtractedSizeHeight, currentNodeBreadth * scaleToExtractedSizeBreadth];
 
-          el.extractedScale = 1 / scaleDownRatio;
+            calculatedScale = 1 / scaleDownRatio;
+          }
+
+          /**
+           * Set the extracted node size.
+           */
+          el._mainTransform.setLocalScale(new Float32Array([mainTransformScaleWidth * scaleToExtractedSizeWidth, mainTransformScaleHeight * scaleToExtractedSizeHeight, mainTransformScaleBreadth * scaleToExtractedSizeBreadth]));
         }
-
-        /**
-         * Set the extracted node size.
-         */
-        el._mainTransform.setLocalScale(new Float32Array([mainTransformScaleWidth * scaleToExtractedSizeWidth, mainTransformScaleHeight * scaleToExtractedSizeHeight, mainTransformScaleBreadth * scaleToExtractedSizeBreadth]));
       }//end extracted-size
 
       /**
        * Dispatch pre node-extracted synthetic event.
        */
       el.dispatchEvent(new Event('extracting-node'));
+
+      /**
+       * Calculate Z position for the extracted node.
+       */
+      let newPositionZ = nodePositionZ + aniTransformPositionZ + mainTransformPositionZ + currentNodeBreadth;
+
+      /**
+       * Create Matrix with position for the extracted node.
+       */
+      let transformMatrix = new DOMMatrix().translate(aniTransformPositionX + mainTransformPositionX + (window.mlWorld.stageExtent.right - window.mlWorld.stageExtent.left)/2, aniTransformPositionY + mainTransformPositionY + (window.mlWorld.viewportHeight/2 + window.mlWorld.viewPortPositionTopLeft.y) + (window.mlWorld.stageExtent.top - window.mlWorld.stageExtent.bottom)/2, newPositionZ + (window.mlWorld.stageExtent.front - window.mlWorld.stageExtent.back)/2);
+
+      /**
+       * Use calculatedScale, otherwise use extracted-scale attribute.
+       */
+      let extractedScale = 1;
+      if (calculatedScale > 0) {
+        extractedScale = calculatedScale;
+      }
+      else if (el.hasAttribute('extracted-scale') && parseFloat(el.getAttribute('extracted-scale')) > 0) {
+        extractedScale = parseFloat(el.getAttribute('extracted-scale'));
+      }
 
       /**
        * Set the node in middle of main transform.
@@ -1369,26 +1429,11 @@
        */
       el._transform.setLocalPosition(new Float32Array([0, 0, 0]));
 
-      /**
-       * Calculate Z position for the extracted node.
-       */
-      let newPositionZ;
-      if (el._model) {
-        newPositionZ = aniTransformPositionZ + mainTransformPositionZ + (el._resource.depth * el._model.getLocalScale()[2]);
-      } else if (el._quad) {
-        newPositionZ = aniTransformPositionZ + mainTransformPositionZ;
-      }
-
-      /**
-       * Create Matrix with position for the extracted node.
-       */
-      let transformMatrix = new DOMMatrix().translate(aniTransformPositionX + mainTransformPositionX + (window.mlWorld.stageExtent.right - window.mlWorld.stageExtent.left)/2, aniTransformPositionY + mainTransformPositionY + (window.mlWorld.viewportHeight/2 + window.mlWorld.viewPortPositionTopLeft.y) + (window.mlWorld.stageExtent.top - window.mlWorld.stageExtent.bottom)/2, newPositionZ + (window.mlWorld.stageExtent.front - window.mlWorld.stageExtent.back)/2);
-
       /***
-       * Call extractContent on transform.
-       * Provide Matrix and size of the node to be extracted.
+       * Call extractContent on main transform.
+       * Provide Matrix, size of the node to be extracted and extraction scale.
        */
-      doExtraction(el, transformMatrix, {width:eWidth, height:eHeight, breadth: eBreadth});
+      doExtraction(el, transformMatrix, {width:eWidth, height:eHeight, breadth: eBreadth}, extractedScale);
 
       /**
        * Resize node back to original in main Transform.
@@ -1410,32 +1455,17 @@
   /**
    * Do extraction of node.
    * Dispatch node-extracted event.
-    * @param {HTMLElement} el HTML custom element.
-  	* @param {DOMMatrix} transformMatrix Position of extracted node.
-  	* @param {JSONObject} eSize Size of volume of extracted node.
+   * @param {HTMLElement} el HTML custom element.
+   * @param {DOMMatrix} transformMatrix Position of extracted node.
+   * @param {JSONObject} eSize Size of volume of extracted node.
+   * @param {Number} extractedScale Scale to be used once extracted.
    */
-  let doExtraction = (el, transformMatrix, eSize) => {
-    /**
-     * Use extractedScale if specified, otherwise set extractedScale to 1.
-     */
-    let extractedScale = el.extractedScale ? el.extractedScale : 1;
-
+  let doExtraction = (el, transformMatrix, eSize, extractedScale) => {
     /**
      * Check for specified path.
      * If no path is specified default to current site.
      */
     let path = (el.extractedLink) ? el.extractedLink : window.location.href;
-
-    /**
-     * If animated model, the AABB could be wrong.
-     * Use the size from HTML custom element, when no extracted Size.
-     */
-    if (el.animation && !el.extractedSize) {
-      let { width, height, breadth } = getHTMLElementSize(el);
-      eSize.width   = width;
-      eSize.height  = height;
-      eSize.breadth = breadth;
-    }
 
     /**
      * If node rotation in any of the axes, calculate size of volume hosting the node after rotation.
@@ -1475,17 +1505,32 @@
     }
 
     /**
+     * If animated model, the AABB could be wrong.
+     * Make the volume size twice as big.
+     */
+    if (el.hasAttribute('model-animation')) {
+      eSize.width   *=  2;
+      eSize.height  *=  2;
+      eSize.breadth *=  2;
+    }
+
+    /**
      * Extract content with dictionary manifest
      */
-    el._mainTransform.extractContent({
-      scale: extractedScale,
-      transform: transformMatrix,
-      doIt: "auto",
-      origin_url: path,
-      width: eSize.width + VOLUME_GAP,
-      height: eSize.height + VOLUME_GAP,
-      breadth: eSize.breadth + VOLUME_GAP
-    });
+    let extractionOptions = {
+        scale: extractedScale,
+        transform: transformMatrix,
+        doIt: "auto",
+        origin_url: path,
+        width: eSize.width + VOLUME_GAP,
+        height: eSize.height + VOLUME_GAP,
+        breadth: eSize.breadth + VOLUME_GAP
+    };
+
+    /**
+     * Call extractContent API.
+     */
+    let extractResult = el._mainTransform.extractContent(extractionOptions);
 
     /**
      * Dispatch node-extracted synthetic event.
@@ -1575,13 +1620,13 @@
        * Record current scale.
        */
       if (!el._originalScale) {
-        el._originalScale = el._mainTransform.getLocalScale();
+        el._originalScale = node.getLocalScale();
       }
 
       /**
        * Set mouseover node scale.
        */
-      el._mainTransform.scaleTo(new Float32Array([el._originalScale[0] * MOUSE_OVER_RATIO, el._originalScale[1] * MOUSE_OVER_RATIO, el._originalScale[2] * MOUSE_OVER_RATIO]), 0.1, -1);
+      node.scaleTo(new Float32Array([el._originalScale[0] * MOUSE_OVER_RATIO, el._originalScale[1] * MOUSE_OVER_RATIO, el._originalScale[2] * MOUSE_OVER_RATIO]), 0.1, -1);
 
       /**
        * Record current position.
@@ -1665,7 +1710,7 @@
        * Reset mouseeover node scale.
        */
       if (el._originalScale) {
-        el._mainTransform.scaleTo(new Float32Array([el._originalScale[0], el._originalScale[1], el._originalScale[2]]), 0.1, -2);
+        node.scaleTo(new Float32Array([el._originalScale[0], el._originalScale[1], el._originalScale[2]]), 0.1, -2);
       }
 
       /**
@@ -1676,6 +1721,111 @@
        * Record if last event was generated from HTML element.
        */
       el._lastHoverEventHtml = e.isTrusted;
+    }
+  };
+
+  /**
+   * Get the size of the node.
+   * The size could be specified via CSS using width and height properties and breadth attribute OR
+   * when DOM extraction, use 15% of browsers dimension.
+   * @param {HTMLElement} el HTML custom element.
+   */
+  let getNodeSize = (el) => {
+
+    let width, height, breadth;
+
+    /**
+     * ml-model or ml-quad.
+     */
+    if (el.tagName === 'ML-MODEL' || el.tagName === 'ML-QUAD') {
+      /**
+       * Get the size of HTML custom element.
+       */
+      let elSize = getHTMLElementSize(el);
+      width = elSize.width;
+      height = elSize.height;
+      breadth = elSize.breadth;
+
+    }
+    /**
+     * DOM extraction. Get the initial size
+     */
+    else if ( el.hasAttribute('extracted-src')) {
+      /**
+       * Get the initial size by calculating 15 percent of the browser's dimensions.
+       */
+      width = (mlWorld.viewportWidth / 100 ) * 15 ;
+      height = (mlWorld.viewportHeight / 100 ) * 15 ;
+      breadth = Math.max(width, height);
+    }
+
+    return {
+      width: width,
+      height: height,
+      breadth: breadth
+    };
+  };
+
+  /**
+   * Scale node size to match HTML custom element.
+   * @param {HTMLElement} el HTML custom element.
+   */
+  let setNodeSize = (el) => {
+    /**
+     * Get node. Either model or quad.
+     */
+    let node = (el._model ? el._model : el._quad);
+
+    if (node) {
+      /**
+       * Get the size of HTML custom element.
+       */
+      let { width, height, breadth } = getNodeSize(el);
+
+      /**
+       * Throw error if any of the node's dimensions has not been specified.
+       */
+      if (width === 0 || height === 0 || breadth === 0) {
+        console.error(`At least one of the node\'s dimension is not specified. With and Height dimensions are specified using CSS width/height properties, and breadth dimension is specified using breadth attribute. ${el.id}.`);
+      }
+      else {
+        /**
+         * Model.
+         */
+        if (el._model) {
+          /**
+           * Set Anchor position.
+           */
+          el._model.setAnchorPosition(new Float32Array([el._resource.center.x, el._resource.center.y, el._resource.center.z]));
+
+          if (el.hasAttribute("fill") && (el.getAttribute('fill') === '' || el.getAttribute('fill') === 'true')) {
+            el._model.setLocalScale(new Float32Array([width / el._resource.width, height / el._resource.height, breadth / el._resource.depth]));
+          }
+          /* Uniformly scale */
+          else {
+            /**
+             * User didn't specifed breadth: Do scale based on width and height
+             */
+            let scaleRatio;
+            if (!el.breadth) {
+              scaleRatio = Math.min(width / el._resource.width, height / el._resource.height);
+            }
+            else {
+              scaleRatio = Math.min(width / el._resource.width, height / el._resource.height, breadth / el._resource.depth);
+            }
+
+            /* Set local scale on the model. */
+            el._model.setLocalScale(new Float32Array([scaleRatio, scaleRatio, scaleRatio]));
+          }
+        }
+        /**
+         * Quad.
+         */
+        else if (el._quad) {
+          el._quad.setLocalScale(new Float32Array([width, height, 0]));
+          el._quad.setLocalPosition(new Float32Array([-(width / 2), -(height / 2), 0]));
+        }
+      }
     }
   };
 
@@ -1699,197 +1849,12 @@
        * Get the position, convert to meters and find mlWorld coordinates.
        */
       let { positionX, positionY, positionZ } = getCoordinates(el);
+
+      /* Set local position on the main transform. */
       el._mainTransform.setLocalPosition(new Float32Array([positionX, positionY, positionZ]));
 
       /* Reset hover effect properties set on setHoverState module.*/
       resetOriginalSizePosition(el);
-    }
-  };
-
-  /**
-   * Add MutationObserver to detect changes on position and visibility of HTML custom element via CSS class or style.
-   * Re-position node when HTML custom element size/position changes via style attribute or css class.
-   * Show/Hide node when HTML custom elelemt visibility changes via CSS.
-   * @param {HTMLElement} el HTML custom element.
-   */
-  let setMutationObserver = (el) => {
-    if (el._mutationObserver === undefined) {
-      el._mutationObserver = new MutationObserver((mutations) => {
-        mutations.forEach(mutation => {
-
-          /**
-           * Get node. Either model or quad.
-           */
-          let node = (mutation.target._model ? mutation.target._model : mutation.target._quad);
-
-          if (node) {
-            /**
-             * Hide node when css visibility hidden and node is visible and there is no visibility attribute in HTML custom element.
-             */
-            if (!isElementVisible(el) && node.visible && !el.hasAttribute('visibility')) {
-              node.visible = false;
-            }
-            /**
-             * Show node when css visibility is visible and node is hidden and there is no visibility attribute in HTML custom element.
-             */
-            else if (isElementVisible(el) && !node.visible && !el.hasAttribute('visibility')) {
-              node.visible = true;
-            }
-
-            /**
-             * Update and possition
-             */
-            setNodePosition(mutation.target);
-          }
-        });
-      });
-
-      let observerConfig = {
-        attributeOldValue: true,
-        attributes: true,
-        attributeFilter: ['style', 'class']
-      };
-
-      el._mutationObserver.observe(el, observerConfig);
-    }
-  };
-
-  /**
-   * Remove MutationObserver used to detect changes on position and visibility of HTML custom element.
-   */
-  let unsetMutationObserver = (el) => {
-    if (el._mutationObserver) {
-      el._mutationObserver.disconnect();
-      delete el._mutationObserver;
-    }
-  };
-
-  /**
-   * When width and height size of the node is not specified via css, set the size of HTML custom element.
-   * @param {HTMLElement} el HTML custom element.
-   */
-  let doAutoSize = (el) => {
-    if (isElementVisible(el) && (el.clientWidth === 0 || el.clientHeight === 0)) {
-
-      /**
-       * Stop observing HTML element.
-       */
-      unsetMutationObserver(el);
-
-      /**
-       * No width specified via css.
-       * Use clientHeight if available, otherwise use inherit, auto or parent's width.
-       */
-      if (el.clientWidth === 0) {
-        if (el.clientHeight > 0) {
-          el.style.width = `${el.clientHeight}px`;
-        }
-        else {
-          el.style.width = `inherit`;
-        }
-
-        if (el.clientWidth === 0) {
-          el.style.width = `auto`;
-        }
-
-        if (el.clientWidth === 0) {
-          el.style.width = `${el.parentElement.clientWidth}px`;
-        }
-      }
-
-      /**
-       * No height specified via css.
-       * Use inherit, auto or otherwise use clientWidth.
-       */
-      if (el.clientHeight === 0) {
-        el.style.height = `inherit`;
-
-        if (el.clientHeight === 0) {
-          el.style.height = `auto`;
-        }
-
-        if (el.clientHeight === 0) {
-          if (el.clientWidth > 0) {
-            el.style.height = `${el.clientWidth}px`;
-          }
-        }
-      }
-
-      /**
-       * Start observing the element again.
-       */
-      setMutationObserver(el);
-    }
-
-  };
-
-  /**
-   * Scale node size to match HTML custom element.
-   * @param {HTMLElement} el HTML custom element.
-   */
-  let setNodeSize = (el) => {
-    /**
-     * Get node. Either model or quad.
-     */
-    let node = (el._model ? el._model : el._quad);
-
-    if (node) {
-      /**
-       * Set HTML element's dimensions if they were not specified via css.
-       * When no width is specified, use clientHeight if available, otherwise use inherit, auto or parent's width.
-       * When no height is specified, use inherit, auto or otherwise use clientWidth.
-       */
-      if (el.clientWidth === 0 || el.clientHeight === 0 ) {
-        doAutoSize(el);
-      }
-
-      /**
-       * Get the size of HTML custom element.
-       */
-      let { width, height, breadth } = getHTMLElementSize(el);
-
-      /**
-       * Throw error if any of the node's dimensions has not been specified.
-       */
-      if (width === 0 || height === 0 || breadth === 0) {
-        console.warn(`At least one of the node\'s dimension is not specified.  Dimensions are specified using CSS width/height properties: ${el.id}.`);
-      }
-      else {
-        /**
-         * Model.
-         */
-        if (el._model) {
-          if (el.hasAttribute("fill") && (el.getAttribute('fill') === '' || el.getAttribute('fill') === 'true')) {
-            el._model.setLocalScale(new Float32Array([width / el._resource.width, height / el._resource.height, breadth / el._resource.depth]));
-          }
-          /* Uniformly scale */
-          else {
-            /**
-             * User didn't specifed breadth: Do scale based on width and height
-             */
-            let scaleRatio;
-            if (!el.breadth) {
-              scaleRatio = Math.min(width / el._resource.width, height / el._resource.height);
-            }
-            else {
-              scaleRatio = Math.min(width / el._resource.width, height / el._resource.height, breadth / el._resource.depth);
-            }
-
-            /* Set local scale on the model. */
-            el._model.setLocalScale(new Float32Array([scaleRatio, scaleRatio, scaleRatio]));
-
-            /* Set Anchor position. */
-            el._model.setAnchorPosition(new Float32Array([el._resource.center.x, el._resource.center.y, el._resource.center.z]));
-          }
-        }
-        /**
-         * Quad.
-         */
-        else if (el._quad) {
-          el._quad.setLocalScale(new Float32Array([width, height, 0]));
-          el._quad.setLocalPosition(new Float32Array([-((width) / 2), -(height / 2), 0]));
-        }
-      }
     }
   };
 
@@ -2174,30 +2139,41 @@
      */
     el._model.shader = resources.shader;
 
-     /**
-      * Create transform if it does not exists.
-      * Add model to transform, add transform to volume.
-      */
-     if (!el._transform) {
-       /**
-        * _transform is used for transform animations.
-        */
-       el._transform = volume.createTransform();
-       /**
-        * Add reference to HTML Custom Element.
-        */
-       el._transform.htmlElement = el;
+    /**
+     * Create transform if it does not exists.
+     * Add model to transform, add transform to volume.
+     */
+    if (!el._transform) {
+      /**
+       * _transform is used for transform animations.
+       */
+      el._transform = volume.createTransform();
 
-       el._transform.addChild(el._model);
+      /**
+       * Add reference to HTML Custom Element.
+       */
+      el._transform.htmlElement = el;
 
-       /**
-        * _mainTransform is used for size and position.
-        */
-       el._mainTransform = volume.createTransform();
-       el._mainTransform.addChild(el._transform);
+      /**
+       * Add model to transform.
+       */
+      el._transform.addChild(el._model);
 
-       volume.addChild(el._mainTransform);
-     }
+      /**
+       * _mainTransform is used for position.
+       */
+      el._mainTransform = volume.createTransform();
+
+      /**
+       * Add animation transform to mainTransform.
+       */
+      el._mainTransform.addChild(el._transform);
+
+      /**
+       * Add mainTransform to volume.
+       */
+      volume.addChild(el._mainTransform);
+    }
 
     /**
      * Create reference to textures and kmat.
@@ -2261,8 +2237,9 @@
   /**
    * Render the model node.
    * @param {HTMLElement} el HTML custom element.
+   * @param {string} [src = el.src] - Location of model to be rendered.
    */
-  let doModelRendering = async (el) => {
+  let doModelRendering = async (el, src = el.src) => {
     /**
      * Get the volume.
      */
@@ -2303,7 +2280,7 @@
     /**
      * Get the model's resources.
      */
-    let resources = await loadResource(el, el.getAttribute('src'));
+    let resources = await loadResource(el, src);
 
     return createModel(el, resources);
    };
@@ -2311,7 +2288,7 @@
   /**
    * Create an instance of a model.
    * @param {HTMLElement} el HTML custom element.
-   * @param {HTMLElement} elInstance HTML custom element. to create instance from.
+   * @param {HTMLElement} elInstance HTML custom element to create instance from.
    */
   let doModelInstance = (el, elInstance) => {
     /**
@@ -2356,6 +2333,54 @@
      */
     setNodePosition(this);
   }
+
+  /**
+   * Add MutationObserver to detect changes on position and visibility of HTML custom element via CSS class or style.
+   * Re-position node when HTML custom element size/position changes via style attribute or css class.
+   * Show/Hide node when HTML custom elelemt visibility changes via CSS.
+   * @param {HTMLElement} el HTML custom element.
+   */
+  let setMutationObserver = (el) => {
+    if (el._mutationObserver === undefined) {
+      el._mutationObserver = new MutationObserver((mutations) => {
+        mutations.forEach(mutation => {
+
+          /**
+           * Get node. Either model or quad.
+           */
+          let node = (mutation.target._model ? mutation.target._model : mutation.target._quad);
+
+          if (node) {
+            /**
+             * Hide node when css visibility hidden and node is visible and there is no visibility attribute in HTML custom element.
+             */
+            if (!isElementVisible(el) && node.visible && !el.hasAttribute('visibility')) {
+              node.visible = false;
+            }
+            /**
+             * Show node when css visibility is visible and node is hidden and there is no visibility attribute in HTML custom element.
+             */
+            else if (isElementVisible(el) && !node.visible && !el.hasAttribute('visibility')) {
+              node.visible = true;
+            }
+
+            /**
+             * Update and possition
+             */
+            setNodePosition(mutation.target);
+          }
+        });
+      });
+
+      let observerConfig = {
+        attributeOldValue: true,
+        attributes: true,
+        attributeFilter: ['style', 'class']
+      };
+
+      el._mutationObserver.observe(el, observerConfig);
+    }
+  };
 
   /**
    * Add ResizeObserver to detect change in size of the HTML Custom element.
@@ -2447,6 +2472,36 @@
      */
     setNodePosition(this);
   }
+
+  /**
+   * Delete model or quad, transforms and attached properties.
+   * @param {HTMLElement} el HTML custom element.
+   */
+  let deleteNode = (el) => {
+    if (el._model || el._quad) {
+      if (el._model) {
+        el._transform.removeChild(el._model);
+      }
+      else if (el._quad){
+        el._transform.removeChild(el._quad);
+      }
+
+      el._mainTransform.removeChild(el._transform);
+      mlWorld[0].removeChild(el._mainTransform);
+
+      /**
+       * Delete attached properties
+       */
+      delete el._model;
+      delete el._quad;
+      delete el._mainTransform;
+      delete el._transform;
+      delete el._resource;
+      delete el._textures;
+      delete el._kmat;
+      delete el._texture;
+    }
+  };
 
   /**
    * @function fadeOut
@@ -2863,21 +2918,9 @@
      */
     disconnectedCallback() {
       /**
-       * Delete node.
-       * Nullify all attached properties.
+       * Delete node and all attached properties.
        */
-      if (this._model) {
-        this._transform.removeChild(this._model);
-        this._mainTransform.removeChild(this._transform);
-        mlWorld[0].removeChild(this._mainTransform);
-      }
-
-      this._model = null;
-      this._mainTransform = null;
-      this._transform = null;
-      this._resource = null;
-      this._textures = null;
-      this._kmat = null;
+      deleteNode(this);
 
       /**
        * Remove 'scroll' event listeners from window.
@@ -3504,17 +3547,34 @@
      * Add model to transform, add transform to volume.
      */
     if (!el._transform) {
+      /**
+       * _transform is used for transform animations.
+       */
       el._transform = volume.createTransform();
+
       /**
        * Add reference to HTML Custom Element.
        */
       el._transform.htmlElement = el;
 
+      /**
+       * Add quad to transform.
+       */
       el._transform.addChild(el._quad);
 
+      /**
+       * _mainTransform is used position.
+       */
       el._mainTransform = volume.createTransform();
+
+      /**
+       * Add animation transform to mainTransform.
+       */
       el._mainTransform.addChild(el._transform);
 
+      /**
+       * Add mainTransform to volume.
+       */
       volume.addChild(el._mainTransform);
     }
 
@@ -3799,19 +3859,9 @@
      */
     disconnectedCallback() {
       /**
-       * Delete node.
-       * Nullify all attached properties.
+       * Delete node and all attached properties.
        */
-      if (this._quad) {
-        this._transform.removeChild(this._quad);
-        this._mainTransform.removeChild(this._transform);
-        mlWorld[0].removeChild(this._mainTransform);
-      }
-
-      this._quad = null;
-      this._texture = null;
-      this._mainTransform = null;
-      this._transform = null;
+      deleteNode(this);
 
       /**
        * Remove 'scroll' event listeners from window.
@@ -4123,6 +4173,67 @@
     }
   };
 
+  let handleDomExtraction = (event) => {
+    if (event.button !== 6) {
+      return;
+    }
+
+    /**
+     * Assign element.
+     */
+    let el = event.target;
+
+    /**
+     * Check extracted-src and extractable attributes are preset.
+     */
+    if (el.tagName !== 'ML-MODEL' && el.tagName !== 'ML-QUAD' && el.hasAttribute('extracted-src') && el.hasAttribute('extractable') && (el.getAttribute('extractable') === '' || el.getAttribute('extractable') === 'true')) {
+      /**
+       * Skip all other extractions.
+       */
+      event.preventDefault();
+
+      /**
+       * Check for Volume.
+       * If no volume, reset stage and create volume.
+       */
+      if (mlWorld.length === 0) {
+        /**
+         * Reset stage.
+         */
+        window.mlWorld.resetStageExtent();
+
+        /**
+         * Create volume.
+         */
+        createVolume(el);
+      }
+
+      /**
+       * Render model.
+       */
+      doModelRendering(el, el.getAttribute('extracted-src')).then(() => {
+        /**
+         * Don't show model.
+         */
+        el._model.visible = false;
+
+        /**
+         * Do the extraction of the model.
+         */
+        handleExtraction(event);
+
+        /**
+         * Delete model.
+         */
+        deleteNode(el);
+
+      }).catch((err) => {
+        /* Show error. */
+        console.error(`Problem extracting node: ${err}`);
+      });
+    }
+  };
+
   /*!
    * @license
    * Copyright (c) 2018-present Magic Leap, Inc. All Rights Reserved.
@@ -4141,12 +4252,18 @@
     /**
      * Listen for page orientation event to rotate and reposition the JS Volume.
      */
-    document.addEventListener("mlpageorientation", mainStageChangedListener);
+    document.addEventListener('mlpageorientation', mainStageChangedListener);
+
+    /**
+     * Listen for mousedown event to handle DOM extraction on longpress.
+     */
+    document.addEventListener('mousedown', handleDomExtraction, true);
 
     /**
      * Animate at 60FPS by calling mlWorld.update();
      */
     setInterval (() => window.mlWorld.update(), 16);
+
   }
   else {
     console.warn("Unable to render content: No mixed-reality browser detected.");

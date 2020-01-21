@@ -127,6 +127,25 @@ export class MlStage extends HTMLElement {
     });
   }
 
+  /**
+   * Set names of attributes to observe.
+   */
+  static get observedAttributes() {
+    return ['extents'];
+  }
+
+  /**
+   * An attribute was added, removed, or updated.
+   */
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (window.mlWorld && mlWorld[0]) {
+      /**
+       * Requested Stage.
+       */
+      this.requestStageExtents();
+    }
+  }
+
   /*** Element's Properties. ***/
 
   /**

@@ -8,8 +8,9 @@ import { createModel } from '../helpers/createModel.js';
 /**
  * Render the model node.
  * @param {HTMLElement} el HTML custom element.
+ * @param {string} [src = el.src] - Location of model to be rendered.
  */
-let doModelRendering = async (el) => {
+let doModelRendering = async (el, src = el.src) => {
   /**
    * Get the volume.
    */
@@ -50,7 +51,7 @@ let doModelRendering = async (el) => {
   /**
    * Get the model's resources.
    */
-  let resources = await loadResource(el, el.getAttribute('src'));
+  let resources = await loadResource(el, src);
 
   return createModel(el, resources);
  };

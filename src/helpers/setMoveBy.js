@@ -1,11 +1,11 @@
 import { parseAnimation } from '../utilities/parseAnimation.js';
 import { pixelsToMetersSize } from '../utilities/pixelsToMetersSize.js';
 
- /**
-  * The move-by attribute value is validated, parsed, converted to meters and added to transform.moveBy().
-	* @param {HTMLElement} el HTML custom element.
-  * @param {string} moveByAttributeValue Attribute moveBy value.
-  */
+/**
+ * The move-by attribute value is validated, parsed, converted to meters and added to transform.moveBy().
+ * @param {HTMLElement} el HTML custom element.
+ * @param {string} moveByAttributeValue Attribute moveBy value.
+ */
 let setMoveBy = (el, moveByAttributeValue) => {
   if (moveByAttributeValue) {
     /**

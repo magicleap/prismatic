@@ -82,13 +82,13 @@ let handleHoverStateMouseOver = (e) => {
      * Record current scale.
      */
     if (!el._originalScale) {
-      el._originalScale = el._mainTransform.getLocalScale();
+      el._originalScale = node.getLocalScale();
     }
 
     /**
      * Set mouseover node scale.
      */
-    el._mainTransform.scaleTo(new Float32Array([el._originalScale[0] * MOUSE_OVER_RATIO, el._originalScale[1] * MOUSE_OVER_RATIO, el._originalScale[2] * MOUSE_OVER_RATIO]), 0.1, -1);
+    node.scaleTo(new Float32Array([el._originalScale[0] * MOUSE_OVER_RATIO, el._originalScale[1] * MOUSE_OVER_RATIO, el._originalScale[2] * MOUSE_OVER_RATIO]), 0.1, -1);
 
     /**
      * Record current position.
@@ -172,7 +172,7 @@ let handleHoverStateMouseOut = (e) => {
      * Reset mouseeover node scale.
      */
     if (el._originalScale) {
-      el._mainTransform.scaleTo(new Float32Array([el._originalScale[0], el._originalScale[1], el._originalScale[2]]), 0.1, -2);
+      node.scaleTo(new Float32Array([el._originalScale[0], el._originalScale[1], el._originalScale[2]]), 0.1, -2);
     }
 
     /**

@@ -58,17 +58,34 @@ let createQuad = (el, texture) => {
    * Add model to transform, add transform to volume.
    */
   if (!el._transform) {
+    /**
+     * _transform is used for transform animations.
+     */
     el._transform = volume.createTransform();
+
     /**
      * Add reference to HTML Custom Element.
      */
     el._transform.htmlElement = el;
 
+    /**
+     * Add quad to transform.
+     */
     el._transform.addChild(el._quad);
 
+    /**
+     * _mainTransform is used position.
+     */
     el._mainTransform = volume.createTransform();
+
+    /**
+     * Add animation transform to mainTransform.
+     */
     el._mainTransform.addChild(el._transform);
 
+    /**
+     * Add mainTransform to volume.
+     */
     volume.addChild(el._mainTransform);
   }
 

@@ -12,6 +12,8 @@ let setNodePosition = (el) => {
      * Get the position, convert to meters and find mlWorld coordinates.
      */
     let { positionX, positionY, positionZ } = getCoordinates(el);
+
+    /* Set local position on the main transform. */
     el._mainTransform.setLocalPosition(new Float32Array([positionX, positionY, positionZ]));
 
     /* Reset hover effect properties set on setHoverState module.*/

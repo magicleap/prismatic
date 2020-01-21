@@ -64,30 +64,41 @@ let createModel = (el, resources) => {
    */
   el._model.shader = resources.shader;
 
-   /**
-    * Create transform if it does not exists.
-    * Add model to transform, add transform to volume.
-    */
-   if (!el._transform) {
-     /**
-      * _transform is used for transform animations.
-      */
-     el._transform = volume.createTransform();
-     /**
-      * Add reference to HTML Custom Element.
-      */
-     el._transform.htmlElement = el;
+  /**
+   * Create transform if it does not exists.
+   * Add model to transform, add transform to volume.
+   */
+  if (!el._transform) {
+    /**
+     * _transform is used for transform animations.
+     */
+    el._transform = volume.createTransform();
 
-     el._transform.addChild(el._model);
+    /**
+     * Add reference to HTML Custom Element.
+     */
+    el._transform.htmlElement = el;
 
-     /**
-      * _mainTransform is used for size and position.
-      */
-     el._mainTransform = volume.createTransform();
-     el._mainTransform.addChild(el._transform);
+    /**
+     * Add model to transform.
+     */
+    el._transform.addChild(el._model);
 
-     volume.addChild(el._mainTransform);
-   }
+    /**
+     * _mainTransform is used for position.
+     */
+    el._mainTransform = volume.createTransform();
+
+    /**
+     * Add animation transform to mainTransform.
+     */
+    el._mainTransform.addChild(el._transform);
+
+    /**
+     * Add mainTransform to volume.
+     */
+    volume.addChild(el._mainTransform);
+  }
 
   /**
    * Create reference to textures and kmat.

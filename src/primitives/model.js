@@ -13,6 +13,7 @@ import { setMutationObserver } from '../helpers/setMutationObserver.js';
 import { setResizeObserver } from '../helpers/setResizeObserver.js';
 import { setResizeListener, unsetResizeListener } from '../helpers/setResizeListener.js';
 import { setStageChangeListener, unsetStageChangeListener } from '../helpers/setStageChangeListener.js';
+import { deleteNode } from '../helpers/deleteNode.js'
 
 /* Effects */
 import { fadeOut } from '../effects/fadeOut.js';
@@ -221,21 +222,9 @@ export class MlModel extends HTMLElement {
    */
   disconnectedCallback() {
     /**
-     * Delete node.
-     * Nullify all attached properties.
+     * Delete node and all attached properties.
      */
-    if (this._model) {
-      this._transform.removeChild(this._model);
-      this._mainTransform.removeChild(this._transform);
-      mlWorld[0].removeChild(this._mainTransform)
-    }
-
-    this._model = null;
-    this._mainTransform = null;
-    this._transform = null;
-    this._resource = null;
-    this._textures = null;
-    this._kmat = null;
+    deleteNode(this);
 
     /**
      * Remove 'scroll' event listeners from window.

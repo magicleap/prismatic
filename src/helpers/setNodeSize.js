@@ -1,5 +1,4 @@
-import { doAutoSize } from '../utilities/doAutoSize.js';
-import { getHTMLElementSize } from '../utilities/getHTMLElementSize.js';
+import { getNodeSize } from '../utilities/getNodeSize.js';
 
 /**
  * Scale node size to match HTML custom element.
@@ -13,30 +12,26 @@ let setNodeSize = (el) => {
 
   if (node) {
     /**
-     * Set HTML element's dimensions if they were not specified via css.
-     * When no width is specified, use clientHeight if available, otherwise use inherit, auto or parent's width.
-     * When no height is specified, use inherit, auto or otherwise use clientWidth.
-     */
-    if (el.clientWidth === 0 || el.clientHeight === 0 ) {
-      doAutoSize(el);
-    }
-
-    /**
      * Get the size of HTML custom element.
      */
-    let { width, height, breadth } = getHTMLElementSize(el);
+    let { width, height, breadth } = getNodeSize(el);
 
     /**
      * Throw error if any of the node's dimensions has not been specified.
      */
     if (width === 0 || height === 0 || breadth === 0) {
-      console.warn(`At least one of the node\'s dimension is not specified.  Dimensions are specified using CSS width/height properties: ${el.id}.`);
+      console.error(`At least one of the node\'s dimension is not specified. With and Height dimensions are specified using CSS width/height properties, and breadth dimension is specified using breadth attribute. ${el.id}.`);
     }
     else {
       /**
        * Model.
        */
       if (el._model) {
+        /**
+         * Set Anchor position.
+         */
+        el._model.setAnchorPosition(new Float32Array([el._resource.center.x, el._resource.center.y, el._resource.center.z]));
+
         if (el.hasAttribute("fill") && (el.getAttribute('fill') === '' || el.getAttribute('fill') === 'true')) {
           el._model.setLocalScale(new Float32Array([width / el._resource.width, height / el._resource.height, breadth / el._resource.depth]));
         }
@@ -55,9 +50,6 @@ let setNodeSize = (el) => {
 
           /* Set local scale on the model. */
           el._model.setLocalScale(new Float32Array([scaleRatio, scaleRatio, scaleRatio]));
-
-          /* Set Anchor position. */
-          el._model.setAnchorPosition(new Float32Array([el._resource.center.x, el._resource.center.y, el._resource.center.z]));
         }
       }
       /**
@@ -65,7 +57,7 @@ let setNodeSize = (el) => {
        */
       else if (el._quad) {
         el._quad.setLocalScale(new Float32Array([width, height, 0]));
-        el._quad.setLocalPosition(new Float32Array([-((width) / 2), -(height / 2), 0]));
+        el._quad.setLocalPosition(new Float32Array([-(width / 2), -(height / 2), 0]));
       }
     }
   }

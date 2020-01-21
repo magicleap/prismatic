@@ -31,3 +31,6 @@ For live samples and code snippets, highlighting the Web Platform's core feature
 - Models scroll with page
 - Models can be extracted with raycast: Users no longer have to be interacting with the parent element on the page to extract them.
 - **&lt;stage>** tag: Devs can specify how much space their experience will take up.
+
+### Bug Fixes
+* Fix issue with content placement when a node has transform animations.

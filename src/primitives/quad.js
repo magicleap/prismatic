@@ -13,6 +13,7 @@ import { setMutationObserver } from '../helpers/setMutationObserver.js';
 import { setResizeObserver } from '../helpers/setResizeObserver.js';
 import { setResizeListener, unsetResizeListener } from '../helpers/setResizeListener.js';
 import { setStageChangeListener, unsetStageChangeListener } from '../helpers/setStageChangeListener.js';
+import { deleteNode } from '../helpers/deleteNode.js'
 
 /* Effects */
 import { fadeOut } from '../effects/fadeOut.js';
@@ -218,19 +219,9 @@ export class MlQuad extends HTMLElement {
    */
   disconnectedCallback() {
     /**
-     * Delete node.
-     * Nullify all attached properties.
+     * Delete node and all attached properties.
      */
-    if (this._quad) {
-      this._transform.removeChild(this._quad);
-      this._mainTransform.removeChild(this._transform);
-      mlWorld[0].removeChild(this._mainTransform)
-    }
-
-    this._quad = null;
-    this._texture = null;
-    this._mainTransform = null;
-    this._transform = null;
+    deleteNode(this);
 
     /**
      * Remove 'scroll' event listeners from window.
