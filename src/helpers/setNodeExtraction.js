@@ -67,21 +67,6 @@ let handleExtraction = (e) => {
     }
 
     /**
-     * Get current node postion.
-     */
-    let [nodePositionX, nodePositionY, nodePositionZ] = node.getLocalPosition();
-
-    /**
-     * Get current postion in main transform.
-     */
-    let [mainTransformPositionX, mainTransformPositionY, mainTransformPositionZ] = el._mainTransform.getLocalPosition();
-
-    /**
-     * Get current postion in animation transform.
-     */
-    let [aniTransformPositionX, aniTransformPositionY, aniTransformPositionZ] = el._transform.getLocalPosition();
-
-    /**
      * Get node scale.
      */
     let [nodeScaleWidth, nodeScaleHeight, nodeScaleBreadth] = node.getLocalScale();
@@ -179,14 +164,24 @@ let handleExtraction = (e) => {
     }//end extracted-size
 
     /**
-     * Dispatch pre node-extracted synthetic event.
+     * Dispatch pre extracting-node synthetic event.
      */
     el.dispatchEvent(new Event('extracting-node'));
 
     /**
+     * Get current postion in main transform.
+     */
+    let [mainTransformPositionX, mainTransformPositionY, mainTransformPositionZ] = el._mainTransform.getLocalPosition();
+
+    /**
+     * Get current postion in animation transform.
+     */
+    let [aniTransformPositionX, aniTransformPositionY, aniTransformPositionZ] = el._transform.getLocalPosition();
+
+    /**
      * Calculate Z position for the extracted node.
      */
-    let newPositionZ = nodePositionZ + aniTransformPositionZ + mainTransformPositionZ + currentNodeBreadth;
+    let newPositionZ = aniTransformPositionZ + mainTransformPositionZ + currentNodeBreadth;
 
     /**
      * Create Matrix with position for the extracted node.
@@ -234,6 +229,12 @@ let handleExtraction = (e) => {
      * Set the node's position back to original in animation transform.
      */
     el._transform.setLocalPosition(new Float32Array([aniTransformPositionX, aniTransformPositionY, aniTransformPositionZ]));
+
+    /**
+     * Dispatch node-extracted synthetic event.
+     */
+    el.dispatchEvent(new Event('node-extracted'));
+
   }
 }
 
@@ -316,11 +317,6 @@ let doExtraction = (el, transformMatrix, eSize, extractedScale) => {
    * Call extractContent API.
    */
   let extractResult = el._mainTransform.extractContent(extractionOptions);
-
-  /**
-   * Dispatch node-extracted synthetic event.
-   */
-  el.dispatchEvent(new Event('node-extracted'));
 }
 
 export { setNodeExtraction, unsetNodeExtraction, handleExtraction, doExtraction }

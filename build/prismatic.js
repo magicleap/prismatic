@@ -58,12 +58,23 @@
      * Listen for animationEnd event and dispatch custom event from HTMLElement.
      */
     volume.addEventListener("mlanimation", (event) => {
-      if (event.type === 'animationEnd' && event.model && event.model.htmlElement) {
+      if (event.model && event.model.htmlElement) {
         let el = event.model.htmlElement;
-        let animationEndEvent = new CustomEvent('model-animation-end', {
-          detail: { animationName: event.animationName }
-        });
-        el.dispatchEvent(animationEndEvent);
+
+        if (event.type === 'animationEnd') {
+          let animationEndEvent = new CustomEvent('model-animation-end', {
+            detail: { animationName: event.animationName }
+          });
+
+          el.dispatchEvent(animationEndEvent);
+        }
+        else if (event.type === 'animationLoop') {
+          let animationLoopEvent = new CustomEvent('model-animation-loop', {
+            detail: { animationName: event.animationName }
+          });
+
+          el.dispatchEvent(animationLoopEvent);
+        }
       }
     });
 
@@ -184,12 +195,44 @@
         this.dispatchEvent(new ErrorEvent("error",{error: new Error('Unable to render 3D content on this device.'), message: "No mixed-reality browser detected.", bubbles: true}));
         return;
       }
+    }
+
+    /**
+     * Set names of attributes to observe.
+     */
+    static get observedAttributes() {
+      return ['extents'];
+    }
+
+    /**
+     * An attribute was added, removed, or updated.
+     */
+    attributeChangedCallback(name, oldValue, newValue) {
+      /**
+       * Request stage.
+       */
+      if (window.mlWorld) {
+        this.requestStageExtents();
+      }
+    }
+
+    /**
+     * Request Stage extents.
+     */
+    requestStageExtents() {
+      /**
+       * If no extents attribute.
+       */
+      if (!this.hasAttribute('extents') || this.getAttribute('extents').trim().length === 0) {
+        console.warn(`No stage extents attribute provided.`);
+        return;
+      }
 
       /**
        * Check for Volume.
        * If no volume, reset stage and create volume.
        */
-      if (mlWorld.length === 0) {
+      if (window.mlWorld.length === 0) {
         /**
          * Reset stage.
          */
@@ -201,28 +244,11 @@
         createVolume(this);
       }
 
-      /**
-       * Requested Stage.
-       */
-      this.requestStageExtents();
-    }
-
-    /**
-     * Request Stage extents.
-     */
-    requestStageExtents() {
-      /**
-       * If no extents attribute.
-       */
-      if (!this.hasAttribute('extents')) {
-        console.warn(`No stage extents attribute provided.`);
-        return;
-      }
 
       /**
-       * Default extent values to 0.
+       * Copy current extent values.
        */
-      let stageExtents = {top:0, right:0, bottom:0, left:0, front:0, back:0};
+      let stageExtents = {top:mlWorld.stageExtent.top, right:mlWorld.stageExtent.right, bottom:mlWorld.stageExtent.bottom, left:mlWorld.stageExtent.left, front:mlWorld.stageExtent.front, back:mlWorld.stageExtent.back};
 
       let extentValueArr = this.getAttribute('extents').toLowerCase().split(/;/);
 
@@ -250,7 +276,9 @@
             else if (unitName === 'px') {
               extentPropValue = pixelsToMetersSize(extentPropValue); //convert px to meters
             }
-
+            /**
+             * Update value of extent property.
+             */
             stageExtents[extentPropName] = extentPropValue;
           }
         }
@@ -273,15 +301,15 @@
       window.mlWorld.setStageExtent(stageExt).then((result) => {
         if (result.state == 'granted') {
           /**
-           * Once the stage permission is granted, dispatch stage-granted synthetic event.
+           * Once the stage permission is granted, dispatch mlstage-granted synthetic event.
            */
-          this.dispatchEvent(new Event('stage-granted'));
+          this.dispatchEvent(new Event('mlstage-granted', {bubbles: true}));
         }
         if (result.state == 'denied') {
           /**
-           * Permission was denied. Dispatch stage-denied synthetic event.
+           * Permission was denied. Dispatch mlstage-denied synthetic event.
            */
-          this.dispatchEvent(new Event('stage-denied'));
+          this.dispatchEvent(new Event('mlstage-denied', {bubbles: true}));
 
           console.error(`Permission requesting new stage's extents has not been granted.`);
         }
@@ -293,25 +321,6 @@
          */
         mlWorld[0].visible = true;
       });
-    }
-
-    /**
-     * Set names of attributes to observe.
-     */
-    static get observedAttributes() {
-      return ['extents'];
-    }
-
-    /**
-     * An attribute was added, removed, or updated.
-     */
-    attributeChangedCallback(name, oldValue, newValue) {
-      if (window.mlWorld && mlWorld[0]) {
-        /**
-         * Requested Stage.
-         */
-        this.requestStageExtents();
-      }
     }
 
     /*** Element's Properties. ***/
@@ -375,6 +384,81 @@
     if (el.hidden) return false;
 
     return true;
+  };
+
+  /**
+   * Calculate AABB Min and Max points for stage and node.
+   * Compare Min and Max point to see if node is bounded.
+   * @param {HTMLElement} el HTML custom element.
+   */
+  let isNodeInsideStage = (el) => {
+    /**
+     * Get node. Either model or quad.
+     */
+    let node = (el._model ? el._model : el._quad);
+
+    /**
+     * Get current postion in main transform.
+     */
+    let [mainTransformPositionX, mainTransformPositionY, mainTransformPositionZ] = el._mainTransform.getLocalPosition();
+
+    /**
+     * Get current postion in animation transform.
+     */
+    let [aniTransformPositionX, aniTransformPositionY, aniTransformPositionZ] = el._transform.getLocalPosition();
+
+    /**
+     * Get node scale.
+     */
+    let [nodeScaleWidth, nodeScaleHeight, nodeScaleBreadth] = node.getLocalScale();
+
+    /**
+     * Get main transform scale.
+     */
+    let [mainTransformScaleWidth, mainTransformScaleHeight, mainTransformScaleBreadth] = el._mainTransform.getLocalScale();
+
+    /**
+     * Get animation transform scale.
+     */
+    let [aniTransformScaleWidth, aniTransformScaleHeight, aniTransformScaleBreadth] = el._transform.getLocalScale();
+
+    /**
+     * Get current size of the node.
+     */
+    let currentNodeWidth, currentNodeHeight, currentNodeBreadth;
+    if (el._model) {
+      [currentNodeWidth, currentNodeHeight, currentNodeBreadth] = [el._resource.width * nodeScaleWidth * mainTransformScaleWidth * aniTransformScaleWidth, el._resource.height * nodeScaleHeight * mainTransformScaleHeight * aniTransformScaleHeight, el._resource.depth * nodeScaleBreadth * mainTransformScaleBreadth * aniTransformScaleBreadth];
+    } else if (el._quad) {
+      [currentNodeWidth, currentNodeHeight, currentNodeBreadth] = [nodeScaleWidth * mainTransformScaleWidth * aniTransformScaleWidth, nodeScaleHeight * mainTransformScaleHeight * aniTransformScaleHeight, nodeScaleBreadth * mainTransformScaleBreadth * aniTransformScaleBreadth];
+    }
+
+    /**
+     * Get the stage min and max coordinates.
+     */
+    let stageMaxX = Math.fround(window.mlWorld.stageSize.x / 2);
+    let stageMinX = -stageMaxX;
+
+    let stageMaxY = Math.fround(window.mlWorld.stageSize.y / 2);
+    let stageMinY = -stageMaxY;
+
+    let stageMaxZ = Math.fround(window.mlWorld.stageSize.z / 2);
+    let stageMinZ = -stageMaxZ;
+
+    let modelMinX = Math.fround(aniTransformPositionX + mainTransformPositionX - Math.fround(currentNodeWidth / 2));
+    let modelMaxX = Math.fround(aniTransformPositionX + mainTransformPositionX + Math.fround(currentNodeWidth / 2));
+
+    let modelMinY = Math.fround(aniTransformPositionY + mainTransformPositionY - Math.fround(currentNodeHeight / 2));
+    let modelMaxY = Math.fround(aniTransformPositionY + mainTransformPositionY + Math.fround(currentNodeHeight / 2));
+
+    let modelMinZ = Math.fround(aniTransformPositionZ + mainTransformPositionZ - Math.fround(currentNodeBreadth / 2));
+    let modelMaxZ = Math.fround(aniTransformPositionZ + mainTransformPositionZ + Math.fround(currentNodeBreadth / 2));
+
+    return  (stageMinX <= modelMinX) &&
+            (modelMaxX <= stageMaxX) &&
+            (stageMinY <= modelMinY) &&
+            (modelMaxY <= stageMaxY) &&
+            (stageMinZ <= modelMinZ) &&
+            (modelMaxZ <= stageMaxZ);
   };
 
   /**
@@ -623,7 +707,7 @@
         x = s1 * c2 * c3 - c1 * s2 * s3,
         y = c1 * s2 * c3 + s1 * c2 * s3,
         z = c1 * c2 * s3 - s1 * s2 * c3;
-
+        
     return [x, y, z, w];
   };
 
@@ -1282,21 +1366,6 @@
       }
 
       /**
-       * Get current node postion.
-       */
-      let [nodePositionX, nodePositionY, nodePositionZ] = node.getLocalPosition();
-
-      /**
-       * Get current postion in main transform.
-       */
-      let [mainTransformPositionX, mainTransformPositionY, mainTransformPositionZ] = el._mainTransform.getLocalPosition();
-
-      /**
-       * Get current postion in animation transform.
-       */
-      let [aniTransformPositionX, aniTransformPositionY, aniTransformPositionZ] = el._transform.getLocalPosition();
-
-      /**
        * Get node scale.
        */
       let [nodeScaleWidth, nodeScaleHeight, nodeScaleBreadth] = node.getLocalScale();
@@ -1394,14 +1463,24 @@
       }//end extracted-size
 
       /**
-       * Dispatch pre node-extracted synthetic event.
+       * Dispatch pre extracting-node synthetic event.
        */
       el.dispatchEvent(new Event('extracting-node'));
 
       /**
+       * Get current postion in main transform.
+       */
+      let [mainTransformPositionX, mainTransformPositionY, mainTransformPositionZ] = el._mainTransform.getLocalPosition();
+
+      /**
+       * Get current postion in animation transform.
+       */
+      let [aniTransformPositionX, aniTransformPositionY, aniTransformPositionZ] = el._transform.getLocalPosition();
+
+      /**
        * Calculate Z position for the extracted node.
        */
-      let newPositionZ = nodePositionZ + aniTransformPositionZ + mainTransformPositionZ + currentNodeBreadth;
+      let newPositionZ = aniTransformPositionZ + mainTransformPositionZ + currentNodeBreadth;
 
       /**
        * Create Matrix with position for the extracted node.
@@ -1449,6 +1528,12 @@
        * Set the node's position back to original in animation transform.
        */
       el._transform.setLocalPosition(new Float32Array([aniTransformPositionX, aniTransformPositionY, aniTransformPositionZ]));
+
+      /**
+       * Dispatch node-extracted synthetic event.
+       */
+      el.dispatchEvent(new Event('node-extracted'));
+
     }
   };
 
@@ -1531,11 +1616,6 @@
      * Call extractContent API.
      */
     let extractResult = el._mainTransform.extractContent(extractionOptions);
-
-    /**
-     * Dispatch node-extracted synthetic event.
-     */
-    el.dispatchEvent(new Event('node-extracted'));
   };
 
   /**
@@ -2824,7 +2904,7 @@
         }
 
         /* Render. */
-        this.doRendering().then(() => {
+        doModelRendering(this).then(() => {
           /**
            * Node visibility
            */
@@ -2856,12 +2936,12 @@
         });
       }
     }
-
+    
     /**
-     * An alias of doModelRendering.
+     * A method of the HTML element.
      */
-    doRendering() {
-      return doModelRendering(this);
+    isNodeInsideStage() {
+      return isNodeInsideStage(this);
     }
 
     /**
@@ -3750,7 +3830,7 @@
      * Render node.
      */
     render() {
-      if (this.src) {
+      if (this.src && window.mlWorld) {
         /**
          * Check for Volume.
          * If no Volume, reset stage and create bounded volume.
@@ -3768,7 +3848,7 @@
         }
 
         /* Render. */
-        this.doRendering().then(() => {
+        doQuadRendering(this).then(() => {
           /**
            * Quad visibility
            */
@@ -3803,10 +3883,10 @@
     }
 
     /**
-     * An alias of doQuadRendering.
+     * A method of the HTML element.
      */
-    doRendering() {
-      return doQuadRendering(this);
+    isNodeInsideStage() {
+      return isNodeInsideStage(this);
     }
 
     /**
@@ -3849,7 +3929,7 @@
       /**
        * If any attribute change and there is a volume, Set attribute.
        */
-      else if (mlWorld[0] && this._quad) {
+      else if (window.mlWorld && mlWorld[0] && this._quad) {
        setQuadAttributes(this, {[name] : newValue});
       }
     }
@@ -4248,11 +4328,6 @@
      * Listen for stage resize event to reposition and resize the JS Volume.
      */
     document.addEventListener('mlstage', mainStageChangedListener);
-
-    /**
-     * Listen for page orientation event to rotate and reposition the JS Volume.
-     */
-    document.addEventListener('mlpageorientation', mainStageChangedListener);
 
     /**
      * Listen for mousedown event to handle DOM extraction on longpress.

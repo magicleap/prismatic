@@ -1,6 +1,7 @@
 import { DEFULT_Z_OFFSET } from '../utilities/constants.js';
 import { getAttributeInPixel } from '../utilities/getAttributeInPixel.js';
 import { isElementVisible } from '../utilities/isElementVisible.js';
+import { isNodeInsideStage } from '../utilities/isNodeInsideStage.js';
 
 import { createVolume } from '../helpers/createVolume.js';
 import { doModelRendering } from '../helpers/doModelRendering.js';
@@ -128,7 +129,7 @@ export class MlModel extends HTMLElement {
       }
 
       /* Render. */
-      this.doRendering().then(() => {
+      doModelRendering(this).then(() => {
         /**
          * Node visibility
          */
@@ -160,12 +161,12 @@ export class MlModel extends HTMLElement {
       });
     }
   }
-
+  
   /**
-   * An alias of doModelRendering.
+   * A method of the HTML element.
    */
-  doRendering() {
-    return doModelRendering(this);
+  isNodeInsideStage() {
+    return isNodeInsideStage(this);
   }
 
   /**

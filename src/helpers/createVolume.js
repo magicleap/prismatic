@@ -52,12 +52,23 @@ let createVolume = (el) => {
    * Listen for animationEnd event and dispatch custom event from HTMLElement.
    */
   volume.addEventListener("mlanimation", (event) => {
-    if (event.type === 'animationEnd' && event.model && event.model.htmlElement) {
+    if (event.model && event.model.htmlElement) {
       let el = event.model.htmlElement;
-      let animationEndEvent = new CustomEvent('model-animation-end', {
-        detail: { animationName: event.animationName }
-      });
-      el.dispatchEvent(animationEndEvent);
+
+      if (event.type === 'animationEnd') {
+        let animationEndEvent = new CustomEvent('model-animation-end', {
+          detail: { animationName: event.animationName }
+        });
+
+        el.dispatchEvent(animationEndEvent);
+      }
+      else if (event.type === 'animationLoop') {
+        let animationLoopEvent = new CustomEvent('model-animation-loop', {
+          detail: { animationName: event.animationName }
+        });
+
+        el.dispatchEvent(animationLoopEvent);
+      }
     }
   });
 

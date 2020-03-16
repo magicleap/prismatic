@@ -15,7 +15,7 @@
   </style>
 </head>
 <body>
-  <ml-stage id="stage" extents="back:0.60;"></ml-stage>
+  <ml-stage id="stage" extents="back:500px;"></ml-stage>
 
   <div class="example">Example for stage and transform animation event.</div>
 
@@ -23,9 +23,9 @@
     id="turkeyModel"
     src="models/turkey/turkey.fbx"
     materials="kmat: models/turkey/turkey.kmat; textures: models/turkey/turkey_baseColor.png models/turkey/turkey_Normal.png models/turkey/turkey_Roughness.png;"
-    style="width: 50%; height: 50%; position: absolute; top:60%; left: 50%; transform: translate(-50%, -50%);"
+    style="width: 500px; height: 300px; position: absolute; top:60%; left: 50%; transform: translate(-50%, -50%);"
     z-offset="-1000px"
-    model-scale="0 0 0"
+    model-scale="0.05 0.05 0.05"
     model-animation-speed="0"
     model-animation="walking, false, -1">
   </ml-model>
@@ -34,10 +34,10 @@
     import * as PRISMATIC from '../src/main.js';
 
     /* When stage is ready, start animation. */
-    stage.addEventListener('stage-granted', (e) => {
+    stage.addEventListener('mlstage-granted', (e) => {
       turkeyModel.animationSpeed = 1;
-      turkeyModel.scaleTo="axes: 0.5 0.5 0.5; duration: 16s; track: 1;"
-      turkeyModel.moveBy="axes: 0 0px 900px; duration: 20s; track: 2;"
+      turkeyModel.scaleTo="axes: 1 1 1; duration: 10s; track: 1;"
+      turkeyModel.moveBy="axes: 0 0px 1400px; duration: 15s; track: 2;"
     });
 
     turkeyModel.addEventListener('transform-animation-end', (e) => {

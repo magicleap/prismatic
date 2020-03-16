@@ -16,12 +16,44 @@ export class MlStage extends HTMLElement {
       this.dispatchEvent(new ErrorEvent("error",{error: new Error('Unable to render 3D content on this device.'), message: "No mixed-reality browser detected.", bubbles: true}));
       return;
     }
+  }
+
+  /**
+   * Set names of attributes to observe.
+   */
+  static get observedAttributes() {
+    return ['extents'];
+  }
+
+  /**
+   * An attribute was added, removed, or updated.
+   */
+  attributeChangedCallback(name, oldValue, newValue) {
+    /**
+     * Request stage.
+     */
+    if (window.mlWorld) {
+      this.requestStageExtents();
+    }
+  }
+
+  /**
+   * Request Stage extents.
+   */
+  requestStageExtents() {
+    /**
+     * If no extents attribute.
+     */
+    if (!this.hasAttribute('extents') || this.getAttribute('extents').trim().length === 0) {
+      console.warn(`No stage extents attribute provided.`);
+      return;
+    }
 
     /**
      * Check for Volume.
      * If no volume, reset stage and create volume.
      */
-    if (mlWorld.length === 0) {
+    if (window.mlWorld.length === 0) {
       /**
        * Reset stage.
        */
@@ -33,28 +65,11 @@ export class MlStage extends HTMLElement {
       createVolume(this);
     }
 
-    /**
-     * Requested Stage.
-     */
-    this.requestStageExtents();
-  }
-
-  /**
-   * Request Stage extents.
-   */
-  requestStageExtents() {
-    /**
-     * If no extents attribute.
-     */
-    if (!this.hasAttribute('extents')) {
-      console.warn(`No stage extents attribute provided.`);
-      return;
-    }
 
     /**
-     * Default extent values to 0.
+     * Copy current extent values.
      */
-    let stageExtents = {top:0, right:0, bottom:0, left:0, front:0, back:0};
+    let stageExtents = {top:mlWorld.stageExtent.top, right:mlWorld.stageExtent.right, bottom:mlWorld.stageExtent.bottom, left:mlWorld.stageExtent.left, front:mlWorld.stageExtent.front, back:mlWorld.stageExtent.back};
 
     let extentValueArr = this.getAttribute('extents').toLowerCase().split(/;/);
 
@@ -82,7 +97,9 @@ export class MlStage extends HTMLElement {
           else if (unitName === 'px') {
             extentPropValue = pixelsToMetersSize(extentPropValue); //convert px to meters
           }
-
+          /**
+           * Update value of extent property.
+           */
           stageExtents[extentPropName] = extentPropValue;
         }
       }
@@ -105,15 +122,15 @@ export class MlStage extends HTMLElement {
     window.mlWorld.setStageExtent(stageExt).then((result) => {
       if (result.state == 'granted') {
         /**
-         * Once the stage permission is granted, dispatch stage-granted synthetic event.
+         * Once the stage permission is granted, dispatch mlstage-granted synthetic event.
          */
-        this.dispatchEvent(new Event('stage-granted'));
+        this.dispatchEvent(new Event('mlstage-granted', {bubbles: true}));
       }
       if (result.state == 'denied') {
         /**
-         * Permission was denied. Dispatch stage-denied synthetic event.
+         * Permission was denied. Dispatch mlstage-denied synthetic event.
          */
-        this.dispatchEvent(new Event('stage-denied'));
+        this.dispatchEvent(new Event('mlstage-denied', {bubbles: true}));
 
         console.error(`Permission requesting new stage's extents has not been granted.`);
       }
@@ -125,25 +142,6 @@ export class MlStage extends HTMLElement {
        */
       mlWorld[0].visible = true;
     });
-  }
-
-  /**
-   * Set names of attributes to observe.
-   */
-  static get observedAttributes() {
-    return ['extents'];
-  }
-
-  /**
-   * An attribute was added, removed, or updated.
-   */
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (window.mlWorld && mlWorld[0]) {
-      /**
-       * Requested Stage.
-       */
-      this.requestStageExtents();
-    }
   }
 
   /*** Element's Properties. ***/

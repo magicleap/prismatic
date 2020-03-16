@@ -23,8 +23,13 @@ For more information and guides are available on Magic Leap's [Developer Portal]
 
 For live samples and code snippets, highlighting the Web Platform's core features, checkout the Developer Samples website [here](https://magicleaphelio.com/devsamples).
 
+## What's New in This Release
+- Extract 3D models from regular HTML elements.
+- Introduce model-animation-loop event.
+- Introduce isNodeInsideStage() method on nodes.
+- Allow update of stage size via JS.
 
-## What's New
+## New Features in Prismatic v2
 - A major optimization of the Prismatic JS library
 - Faster model loading
 - Model instancing
@@ -33,4 +38,4 @@ For live samples and code snippets, highlighting the Web Platform's core feature
 - **&lt;stage>** tag: Devs can specify how much space their experience will take up.
 
 ### Bug Fixes
-* Fix issue with content placement when a node has transform animations.
+- Fix some issues with Quads.

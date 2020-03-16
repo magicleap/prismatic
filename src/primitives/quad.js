@@ -1,6 +1,7 @@
 import { DEFULT_Z_OFFSET } from '../utilities/constants.js';
 import { getAttributeInPixel } from '../utilities/getAttributeInPixel.js';
 import { isElementVisible } from '../utilities/isElementVisible.js';
+import { isNodeInsideStage } from '../utilities/isNodeInsideStage.js';
 
 import { createVolume } from '../helpers/createVolume.js';
 import { doQuadRendering } from '../helpers/doQuadRendering.js';
@@ -110,7 +111,7 @@ export class MlQuad extends HTMLElement {
    * Render node.
    */
   render() {
-    if (this.src) {
+    if (this.src && window.mlWorld) {
       /**
        * Check for Volume.
        * If no Volume, reset stage and create bounded volume.
@@ -128,7 +129,7 @@ export class MlQuad extends HTMLElement {
       }
 
       /* Render. */
-      this.doRendering().then(() => {
+      doQuadRendering(this).then(() => {
         /**
          * Quad visibility
          */
@@ -163,10 +164,10 @@ export class MlQuad extends HTMLElement {
   }
 
   /**
-   * An alias of doQuadRendering.
+   * A method of the HTML element.
    */
-  doRendering() {
-    return doQuadRendering(this);
+  isNodeInsideStage() {
+    return isNodeInsideStage(this);
   }
 
   /**
@@ -209,7 +210,7 @@ export class MlQuad extends HTMLElement {
     /**
      * If any attribute change and there is a volume, Set attribute.
      */
-    else if (mlWorld[0] && this._quad) {
+    else if (window.mlWorld && mlWorld[0] && this._quad) {
      setQuadAttributes(this, {[name] : newValue});
     }
   }

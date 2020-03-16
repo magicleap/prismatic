@@ -21,11 +21,6 @@ if (window.mlWorld) {
   document.addEventListener('mlstage', mainStageChangedListener);
 
   /**
-   * Listen for page orientation event to rotate and reposition the JS Volume.
-   */
-  document.addEventListener('mlpageorientation', mainStageChangedListener);
-
-  /**
    * Listen for mousedown event to handle DOM extraction on longpress.
    */
   document.addEventListener('mousedown', handleDomExtraction, true);
