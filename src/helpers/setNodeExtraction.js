@@ -3,28 +3,64 @@ import { quaternionToAngle } from '../utilities/quaternionToAngle.js';
 import { VOLUME_GAP } from '../utilities/constants.js';
 
 /**
- * Add mlextraction event listener to the HTML custom element to handle extraction.
+ * Add mlextraction and mouselongpress event listeners to the HTML custom element to handle extraction.
  * @param {HTMLElement} el HTML custom element.
  */
 let setNodeExtraction = (el) => {
   if (el) {
+    /**
+     * event listener for mlextraction is legacy code. This is because mlextraction is received only at volume level and that event is re-dispatched as a mouselongpress event.
+     */
     el.addEventListener('mlextraction', handleExtraction, false);
+    el.addEventListener('mouselongpress', handleExtraction, false);
+
+    /**
+     * set the element as draggable and add an event listener.
+     */
+    el.draggable = 'true';
+    el.addEventListener('dragstart', handleDragEvent, false);
   }
 }
 
 /**
- * Remove mlextraction event listener from the node.
+ * Remove mlextraction and mouselongpress event listeners from the node.
  * @param {HTMLElement} el HTML custom element.
  */
 let unsetNodeExtraction = (el) => {
   if (el) {
+    /**
+     * event listener for mlextraction is legacy code. This is because mlextraction is received only at volume level and that event is re-dispatched as a mouselongpress event.
+     */
     el.removeEventListener('mlextraction', handleExtraction, false);
+    el.removeEventListener('mouselongpress', handleExtraction, false);
+
+    /**
+     * Disable draggable and remove the event handler.
+     * TODO(ashwin): Do we need to disable draggable? can we leave ml model as always draggable like images?
+     */
+    el.draggable = 'false';
+    el.removeEventListener('dragstart', handleDragEvent, false);
   }
 };
 
 /**
  * Node extraction handler.
- * @param {HTMLElement} el HTML custom element.
+ * @param {Event} e Event.
+ */
+let handleDragEvent = (e) => {
+  /**
+   * extract the element.
+   */
+  handleExtraction(e);
+  /**
+   * Prevent the default action to avoid triggering unintended code
+   */
+  e.preventDefault();
+}
+
+/**
+ * Node extraction handler.
+ * @param {Event} e Event.
  */
 let handleExtraction = (e) => {
   /**
@@ -35,7 +71,7 @@ let handleExtraction = (e) => {
     /**
      * Consume click event dispatched by API after long press.
      */
-    window.addEventListener('click',  e => e.stopPropagation(), { once: true, capture: true });
+    window.addEventListener('click', e => e.stopPropagation(), { once: true, capture: true });
   }
 
   /**
@@ -186,7 +222,7 @@ let handleExtraction = (e) => {
     /**
      * Create Matrix with position for the extracted node.
      */
-    let transformMatrix = new DOMMatrix().translate(aniTransformPositionX + mainTransformPositionX + (window.mlWorld.stageExtent.right - window.mlWorld.stageExtent.left)/2, aniTransformPositionY + mainTransformPositionY + (window.mlWorld.viewportHeight/2 + window.mlWorld.viewPortPositionTopLeft.y) + (window.mlWorld.stageExtent.top - window.mlWorld.stageExtent.bottom)/2, newPositionZ + (window.mlWorld.stageExtent.front - window.mlWorld.stageExtent.back)/2);
+    let transformMatrix = new DOMMatrix().translate(aniTransformPositionX + mainTransformPositionX + (window.mlWorld.stageExtent.right - window.mlWorld.stageExtent.left) / 2, aniTransformPositionY + mainTransformPositionY + (window.mlWorld.viewportHeight / 2 + window.mlWorld.viewPortPositionTopLeft.y) + (window.mlWorld.stageExtent.top - window.mlWorld.stageExtent.bottom) / 2, newPositionZ + (window.mlWorld.stageExtent.front - window.mlWorld.stageExtent.back) / 2);
 
     /**
      * Use calculatedScale, otherwise use extracted-scale attribute.
@@ -213,7 +249,7 @@ let handleExtraction = (e) => {
      * Call extractContent on main transform.
      * Provide Matrix, size of the node to be extracted and extraction scale.
      */
-    doExtraction(el, transformMatrix, {width:eWidth, height:eHeight, breadth: eBreadth}, extractedScale);
+    doExtraction(el, transformMatrix, { width: eWidth, height: eHeight, breadth: eBreadth }, extractedScale);
 
     /**
      * Resize node back to original in main Transform.
@@ -295,22 +331,22 @@ let doExtraction = (el, transformMatrix, eSize, extractedScale) => {
    * Make the volume size twice as big.
    */
   if (el.hasAttribute('model-animation')) {
-    eSize.width   *=  2;
-    eSize.height  *=  2;
-    eSize.breadth *=  2;
+    eSize.width *= 2;
+    eSize.height *= 2;
+    eSize.breadth *= 2;
   }
 
   /**
    * Extract content with dictionary manifest
    */
   let extractionOptions = {
-      scale: extractedScale,
-      transform: transformMatrix,
-      doIt: "auto",
-      origin_url: path,
-      width: eSize.width + VOLUME_GAP,
-      height: eSize.height + VOLUME_GAP,
-      breadth: eSize.breadth + VOLUME_GAP
+    scale: extractedScale,
+    transform: transformMatrix,
+    doIt: 'auto',
+    origin_url: path,
+    width: eSize.width + VOLUME_GAP,
+    height: eSize.height + VOLUME_GAP,
+    breadth: eSize.breadth + VOLUME_GAP
   };
 
   /**

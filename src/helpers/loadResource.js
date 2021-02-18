@@ -44,7 +44,7 @@ let loadResource = async (el, modelSrc) => {
     /**
      * Create a model resource from volume.
      */
-    let resource = mlWorld[0].createModelResource(data);
+    let resource = window.mlWorld[0].createModelResource(data);
 
     /**
      * Add kmat to resource.

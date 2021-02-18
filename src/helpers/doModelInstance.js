@@ -10,6 +10,10 @@ let doModelInstance = (el, elInstance) => {
    * Get resources from elInsitance to create model.
    */
   let resources = {resource: elInstance._resource, shader: elInstance._model.shader};
+
+  /**
+   * Create Model with the instance resources.
+   */
   createModel(el, resources);
 };
 

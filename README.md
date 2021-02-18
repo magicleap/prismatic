@@ -23,19 +23,15 @@ For more information and guides are available on Magic Leap's [Developer Portal]
 
 For live samples and code snippets, highlighting the Web Platform's core features, checkout the Developer Samples website [here](https://magicleaphelio.com/devsamples).
 
-## What's New in This Release
-- Extract 3D models from regular HTML elements.
-- Introduce model-animation-loop event.
-- Introduce isNodeInsideStage() method on nodes.
-- Allow update of stage size via JS.
+## What's new in Release v2.0.6
+- Use new event model introduced in Helio for Lumin OS 0.98.20. Prismatic library has to be updated to v2.0.6 maintain Extraction functionality.
 
-## New Features in Prismatic v2
-- A major optimization of the Prismatic JS library
+## Features of Prismatic v2
 - Faster model loading
 - Model instancing
 - Models scroll with page
 - Models can be extracted with raycast: Users no longer have to be interacting with the parent element on the page to extract them.
+- Extract 3D models from regular HTML elements.
+- Add instances of a 3D node on the fly.
 - **&lt;stage>** tag: Devs can specify how much space their experience will take up.
-
-### Bug Fixes
-- Fix some issues with Quads.
+- Stage size can be updated via JS.

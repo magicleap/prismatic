@@ -8,7 +8,7 @@ let createKMat = async (kmatPath) => {
   let res = await fetch(kmatPath);
   if (res.ok) {
     let data = await res.arrayBuffer();
-    return mlWorld[0].createKMat(data, kmatPath);
+    return window.mlWorld[0].createKMat(data, kmatPath);
   } else {
     return Promise.reject(new Error(`Problem creating KMat file: ${kmatPath}`));
   }

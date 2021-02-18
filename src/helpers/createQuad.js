@@ -11,7 +11,7 @@ let createQuad = (el, texture) => {
   /**
    * Get the volume.
    */
-  let volume = mlWorld[0];
+  let volume = window.mlWorld[0];
 
   /**
    * Create Quad.

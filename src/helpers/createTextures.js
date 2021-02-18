@@ -13,7 +13,7 @@ let createTextures = (texturePathsArr) => {
       let img = new Image();
 
       img.onload = () => {
-        resolve(mlWorld[0].createTexture(img, texturePath));
+        resolve(window.mlWorld[0].createTexture(img, texturePath));
       }
       img.onerror = () => {
         reject(new Error(`Problem loading texture: ${texturePath}.`));

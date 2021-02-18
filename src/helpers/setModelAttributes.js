@@ -27,7 +27,7 @@ let setModelAttributes = (el, elemAttributes) => {
   /**
    * Get the volume.
    */
-  let volume = mlWorld[0];
+  let volume = window.mlWorld[0];
 
   /**
    * Get the model.

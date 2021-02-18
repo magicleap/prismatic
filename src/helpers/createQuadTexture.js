@@ -29,7 +29,7 @@ let createQuadTexture = (texturePath) => {
       /**
        * Create texture from JS Volume.
        */
-      let texture = mlWorld[0].createTexture(img);
+      let texture = window.mlWorld[0].createTexture(img);
 
       /**
        * Check texture.

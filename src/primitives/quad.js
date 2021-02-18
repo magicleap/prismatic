@@ -58,6 +58,11 @@ export class MlQuad extends HTMLElement {
     }
 
     /**
+     * Add connected flag to check element is inserted into the DOM.
+     */
+    this._connected = true;
+
+    /**
      * When CSS display is not specified, set CSS display to inline-block.
      */
     if (!this.style.display) {
@@ -67,7 +72,7 @@ export class MlQuad extends HTMLElement {
     /**
      * If node has extractable flag, set hover and extract.
      */
-    if (this.extractable) {
+    if (this.extractable && this.extractable !== 'false') {
       /**
        * Set hover mouseover effect.
        */
@@ -85,11 +90,6 @@ export class MlQuad extends HTMLElement {
     setMutationObserver(this);
 
     /**
-     * Observe custom element for changes in size.
-     */
-    setResizeObserver(this);
-
-    /**
      * Listen when browser window is resized.
      * Re-position node.
      */
@@ -105,18 +105,64 @@ export class MlQuad extends HTMLElement {
      * Models are scrollable by default.
      */
     setScrollable(this);
+
+    /**
+     * Observe custom element for changes in size.
+     */
+    setResizeObserver(this);
+
+    /**
+     * Render model.
+     */
+    if (!this._rendering) {
+      this.render();
+    }
   } //end of connectedCallback
 
   /**
    * Render node.
    */
   render() {
-    if (this.src && window.mlWorld) {
+    /**
+     * Exit if no mlWorld.
+     */
+    if (!window.mlWorld) {
+      return;
+    }
+
+    /**
+     * Render instance model.
+     */
+    if (this.instance) {
+      /**
+       * Find element instantiating from.
+       */
+      let elInstance = document.getElementById(this.getAttribute('instance'));
+      /**
+       * Check if valid instantiating element and its model has rendered.
+       */
+      if (elInstance && elInstance._quad) {
+        /**
+         * Render instance of node.
+         */
+        doQuadInstance(this, elInstance);
+        /**
+         * Instance visibility.
+         */
+        if (this._quad) {
+          this._quad.visible = isElementVisible(this) && !(this.getAttribute('visibility') === 'hidden');
+        }
+      }
+    }
+    /**
+     * Render normal quad.
+     */
+    else if (this.src) {
       /**
        * Check for Volume.
        * If no Volume, reset stage and create bounded volume.
        */
-      if (mlWorld.length === 0) {
+      if (window.mlWorld.length === 0) {
         /**
          * Reset stage.
          */
@@ -127,6 +173,12 @@ export class MlQuad extends HTMLElement {
          */
         createVolume(this);
       }
+
+      /**
+       * Start rendering.
+       * Set rendering flag to true.
+       */
+      this._rendering = true;
 
       /* Render. */
       doQuadRendering(this).then(() => {
@@ -159,6 +211,12 @@ export class MlQuad extends HTMLElement {
         this.dispatchEvent(new ErrorEvent("error",{error: err, message: err.message || "Problem rendering node", bubbles: true}));
         /* Show error. */
         console.error(`Problem rendering: ${err}`);
+      }).finally(() => {
+        /**
+         * End rendering.
+         * Set rendering flag to false.
+         */
+        this._rendering = false;
       });
     }
   }
@@ -193,6 +251,7 @@ export class MlQuad extends HTMLElement {
             'move-to',
             'move-by',
             'src',
+            'instance',
             'z-offset'
           ];
   }
@@ -202,16 +261,17 @@ export class MlQuad extends HTMLElement {
    */
   attributeChangedCallback(name, oldValue, newValue) {
     /**
-     * Attribute src changed: render node.
+     * Attribute src or instance changed:
+     *  Render node if element is in DOM and not rendering.
      */
-    if (name === 'src') {
+    if (this._connected && !this._rendering && (name === 'src' || name === 'instance')) {
       this.render();
     }
     /**
-     * If any attribute change and there is a volume, Set attribute.
+     * If any attribute change and there is a quad, Set attribute.
      */
-    else if (window.mlWorld && mlWorld[0] && this._quad) {
-     setQuadAttributes(this, {[name] : newValue});
+    else if (this._quad) {
+      setQuadAttributes(this, {[name] : newValue});
     }
   }
 
@@ -444,6 +504,16 @@ export class MlQuad extends HTMLElement {
     this.setAttribute('src', v);
   }
 
+  /**
+   * instance: Element's Property.
+   */
+  get instance() {
+    return this.getAttribute('instance');
+  }
+  set instance(v) {
+    if (this.getAttribute('instance') === v.toString()) return;
+    this.setAttribute('instance', v);
+  }
   /**
    * zOffset: Element's Property.
    */
