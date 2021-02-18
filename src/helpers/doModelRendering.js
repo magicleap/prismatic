@@ -14,7 +14,7 @@ let doModelRendering = async (el, src = el.src) => {
   /**
    * Get the volume.
    */
-  let volume = mlWorld[0];
+  let volume = window.mlWorld[0];
 
   /**
    * Materials attribute has kmat and textures.
@@ -53,7 +53,7 @@ let doModelRendering = async (el, src = el.src) => {
    */
   let resources = await loadResource(el, src);
 
-  return createModel(el, resources);
+  await createModel(el, resources);
  };
 
 export { doModelRendering }

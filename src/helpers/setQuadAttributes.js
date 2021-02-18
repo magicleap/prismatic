@@ -26,7 +26,7 @@ let setQuadAttributes = (el, elemAttributes) => {
   /**
    * Get the volume.
    */
-  let volume = mlWorld[0];
+  let volume = window.mlWorld[0];
 
   /**
    * Get the quad.

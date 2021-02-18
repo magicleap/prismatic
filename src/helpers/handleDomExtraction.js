@@ -1,67 +1,78 @@
-import { createVolume } from '../helpers/createVolume.js'
+import { createVolume } from '../helpers/createVolume.js';
 import { doModelRendering } from '../helpers/doModelRendering.js';
 import { handleExtraction } from '../helpers/setNodeExtraction.js';
-import { deleteNode } from '../helpers/deleteNode.js'
+import { deleteNode } from '../helpers/deleteNode.js';
+
+let DomExtractionEnabled = (el) => {
+  /**
+   * Return if extracted-src or extractable attributes are not preset.
+   */
+  let should_skip_dom_extraction = (el.tagName === 'ML-MODEL'
+   || el.tagName === 'ML-QUAD'
+   || !el.hasAttribute('extracted-src')
+   || !el.hasAttribute('extractable')
+   || (el.getAttribute('extractable') !== '' && el.getAttribute('extractable') !== 'true'));
+
+  return !should_skip_dom_extraction;
+};
 
 let handleDomExtraction = (event) => {
-  if (event.button !== 6) {
-    return;
-  }
-
   /**
    * Assign element.
    */
   let el = event.target;
 
+  if (!DomExtractionEnabled(el)) return;
+
   /**
-   * Check extracted-src and extractable attributes are preset.
+   * Skip all other extractions.
    */
-  if (el.tagName !== 'ML-MODEL' && el.tagName !== 'ML-QUAD' && el.hasAttribute('extracted-src') && el.hasAttribute('extractable') && (el.getAttribute('extractable') === '' || el.getAttribute('extractable') === 'true')) {
-    /**
-     * Skip all other extractions.
-     */
-    event.preventDefault();
+  event.preventDefault();
 
+  /**
+   * Check for Volume.
+   * If no volume, reset stage and create volume.
+   */
+  if (window.mlWorld.length === 0) {
     /**
-     * Check for Volume.
-     * If no volume, reset stage and create volume.
+     * Reset stage.
      */
-    if (mlWorld.length === 0) {
-      /**
-       * Reset stage.
-       */
-      window.mlWorld.resetStageExtent();
-
-      /**
-       * Create volume.
-       */
-      createVolume(el);
-    }
+    window.mlWorld.resetStageExtent();
 
     /**
-     * Render model.
+     * Create volume.
      */
-    doModelRendering(el, el.getAttribute('extracted-src')).then(() => {
-      /**
-       * Don't show model.
-       */
-      el._model.visible = false;
+    createVolume(el);
+  }
 
-      /**
-       * Do the extraction of the model.
-       */
-      handleExtraction(event);
+  /**
+   * Render model.
+   */
+  doModelRendering(el, el.getAttribute('extracted-src')).then(() => {
+    /**
+     * Don't show model.
+     */
+    el._model.visible = false;
 
-      /**
-       * Delete model.
-       */
-      deleteNode(el);
+    /**
+     * Do the extraction of the model.
+     */
+    handleExtraction(event);
 
-    }).catch((err) => {
-      /* Show error. */
-      console.error(`Problem extracting node: ${err}`);
-    });
-  }
-}
+    /**
+     * Delete model.
+     */
+    deleteNode(el);
+  }).catch((err) => {
+    /* Show error. */
+    console.error(`Problem extracting node: ${err}`);
+  });
+};
 
-export { handleDomExtraction }
+let cancelDragOperationIfDomExtractionEnabled = (event) => {
+  if (DomExtractionEnabled(event.target)) {
+    event.preventDefault();
+  }
+};
+
+export { cancelDragOperationIfDomExtractionEnabled, handleDomExtraction };

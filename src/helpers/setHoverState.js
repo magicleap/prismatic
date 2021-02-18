@@ -65,7 +65,7 @@ let handleHoverStateMouseOver = (e) => {
   /**
    * Get the volume.
    */
-  let volume = mlWorld[0];
+  let volume = window.mlWorld[0];
 
   /**
    * Handle mouseover if volume and node is visible and last hover event was not a mouseover.
@@ -141,7 +141,7 @@ let handleHoverStateMouseOut = (e) => {
   /**
    * Get the volume.
    */
-  let volume = mlWorld[0];
+  let volume = window.mlWorld[0];
 
   /**
    * Handle mouseover event if node and last hover event event was not a mouseout.

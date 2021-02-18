@@ -21,17 +21,16 @@ let getNodeSize = (el) => {
     width = elSize.width;
     height = elSize.height;
     breadth = elSize.breadth;
-
   }
   /**
    * DOM extraction. Get the initial size
    */
-  else if ( el.hasAttribute('extracted-src')) {
+  else if (el.hasAttribute('extracted-src')) {
     /**
      * Get the initial size by calculating 15 percent of the browser's dimensions.
      */
-    width = (mlWorld.viewportWidth / 100 ) * 15 ;
-    height = (mlWorld.viewportHeight / 100 ) * 15 ;
+    width = (window.mlWorld.viewportWidth / 100 ) * 15 ;
+    height = (window.mlWorld.viewportHeight / 100 ) * 15 ;
     breadth = Math.max(width, height);
   }
 

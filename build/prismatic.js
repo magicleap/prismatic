@@ -14,7 +14,7 @@
     /**
      * Throw error if volume already exists.
      */
-    if (mlWorld.length !== 0) {
+    if (window.mlWorld.length !== 0) {
       throw new Error('Volume already exists');
     }
 
@@ -23,7 +23,7 @@
      * We need to create the volume with a small size and then we need to set the size.
      * We have a limitation to create a volume of a certain size at a certain point.
      */
-    let volume = mlWorld.createVolume(0.1, 0.1, 0.1);
+    let volume = window.mlWorld.createVolume(0.1, 0.1, 0.1);
 
     /**
      * Throw error if volume was not created.
@@ -40,7 +40,7 @@
     /**
      * Set volume position to be on top of viewport (default).
      */
-    const viewPortPositionTopLeftY = window.mlWorld.viewportHeight/2 + window.mlWorld.viewPortPositionTopLeft.y;
+    const viewPortPositionTopLeftY = window.mlWorld.viewportHeight / 2 + window.mlWorld.viewPortPositionTopLeft.y;
     const transformMatrix = new DOMMatrix().translate(0, viewPortPositionTopLeftY, 0);
     volume.transformVolumeRelativeToHostVolume(transformMatrix);
 
@@ -57,7 +57,7 @@
     /**
      * Listen for animationEnd event and dispatch custom event from HTMLElement.
      */
-    volume.addEventListener("mlanimation", (event) => {
+    volume.addEventListener('mlanimation', (event) => {
       if (event.model && event.model.htmlElement) {
         let el = event.model.htmlElement;
 
@@ -81,7 +81,7 @@
     /**
      * Listen for mltransformanimation event and dispatch custom event from HTML custom element.
      */
-    volume.addEventListener("mltransformanimation", function(event) {
+    volume.addEventListener('mltransformanimation', function (event) {
       if (event.node && event.node.htmlElement) {
         let el = event.node.htmlElement;
         let transformAnimationEndEvent = new CustomEvent('transform-animation-end', {
@@ -92,28 +92,18 @@
     });
 
     /**
-     * Listen for mlextraction event and dispatch custom mlextraction event from HTML custom element to handle extraction.
-     */
-    volume.addEventListener("mlextraction", (event) => {
-      if (event.targetNode && event.targetNode.htmlElement) {
-        let el = event.targetNode.htmlElement;
-        el.dispatchEvent(new Event('mlextraction'));
-      }
-    });
-
-    /**
      * Listen for mlraycast event and dispatch custom event for node from HTML custom element when node is visible.
      * Add inputType property to custom event to differentiate between control and headpos raycast.
      * Dispatch mouseover, mouseout, mousemove from HTLM custome element to handle hover effect on extractable node.
      */
-    volume.addEventListener("mlraycast", (event) => {
+    volume.addEventListener('mlraycast', (event) => {
       if (event.hitData.targetNode && event.hitData.targetNode.htmlElement) {
         let el = event.hitData.targetNode.htmlElement;
 
         /**
          * Replace any instance of the word "Totem" in the event type to "Control".
          */
-        let eventType = event.type.replace(/Totem/g, "Control");
+        let eventType = event.type.replace(/Totem/g, 'Control');
 
         /**
          * Get node. Either model or quad.
@@ -141,11 +131,44 @@
             inputype = 'headpos';
           }
 
-          if (event.hitData.type === 'quadNode' || event.hitData.type === 'modelNode'){
-            let newRaycastEvent = new CustomEvent('node-raycast', { detail: { inputType: inputype, type: eventType, hitData: event.hitData }});
+          if (event.hitData.type === 'quadNode' || event.hitData.type === 'modelNode') {
+            let newRaycastEvent = new CustomEvent('node-raycast', { detail: { inputType: inputype, type: eventType, hitData: event.hitData } });
             el.dispatchEvent(newRaycastEvent);
           }
         }
+      }
+    });
+
+    /**
+     * Listen for mlinput events with "triggerClick" gesture and dispatch custom mouse click event from HTML custom element.
+     */
+    volume.addEventListener('mlinput', (event) => {
+      if (event.gesture === 'triggerClick' && event.targetNode && event.targetNode.htmlElement) {
+        let el = event.targetNode.htmlElement;
+
+        /**
+         * Custom mouse click event.
+         */
+        let clickEvent = new MouseEvent('click', {
+          view: window,
+          bubbles: true,
+          cancelable: true
+        });
+
+        el.dispatchEvent(clickEvent);
+      }
+    });
+
+    /**
+     * Listen for mlextraction event and dispatch custom mouselongpress event from HTML custom element to handle extraction.
+     */
+    volume.addEventListener('mlextraction', (event) => {
+      if (event.targetNode && event.targetNode.htmlElement) {
+        let el = event.targetNode.htmlElement;
+        /**
+         * Dispatch custom mouselongpress event to handle extraction.
+         */
+        el.dispatchEvent(new Event('mouselongpress'));
       }
     });
 
@@ -248,7 +271,7 @@
       /**
        * Copy current extent values.
        */
-      let stageExtents = {top:mlWorld.stageExtent.top, right:mlWorld.stageExtent.right, bottom:mlWorld.stageExtent.bottom, left:mlWorld.stageExtent.left, front:mlWorld.stageExtent.front, back:mlWorld.stageExtent.back};
+      let stageExtents = {top:window.mlWorld.stageExtent.top, right:window.mlWorld.stageExtent.right, bottom:window.mlWorld.stageExtent.bottom, left:mlWorld.stageExtent.left, front:mlWorld.stageExtent.front, back:mlWorld.stageExtent.back};
 
       let extentValueArr = this.getAttribute('extents').toLowerCase().split(/;/);
 
@@ -287,8 +310,8 @@
       /**
        * Hide volume during volume re-size and re-position of the volume in mainStageChangedListener and re-position of nodes in setStageChangeListener.
        */
-      mlWorld[0].visible = false;
-      mlWorld.update();
+      window.mlWorld[0].visible = false;
+      window.mlWorld.update();
 
       /**
        * Prepare MLStageExtent with extents values.
@@ -319,7 +342,7 @@
         /**
          * Show volume when setStageExtent is finished.
          */
-        mlWorld[0].visible = true;
+        window.mlWorld[0].visible = true;
       });
     }
 
@@ -525,7 +548,7 @@
         let img = new Image();
 
         img.onload = () => {
-          resolve(mlWorld[0].createTexture(img, texturePath));
+          resolve(window.mlWorld[0].createTexture(img, texturePath));
         };
         img.onerror = () => {
           reject(new Error(`Problem loading texture: ${texturePath}.`));
@@ -546,7 +569,7 @@
     let res = await fetch(kmatPath);
     if (res.ok) {
       let data = await res.arrayBuffer();
-      return mlWorld[0].createKMat(data, kmatPath);
+      return window.mlWorld[0].createKMat(data, kmatPath);
     } else {
       return Promise.reject(new Error(`Problem creating KMat file: ${kmatPath}`));
     }
@@ -598,7 +621,7 @@
       /**
        * Create a model resource from volume.
        */
-      let resource = mlWorld[0].createModelResource(data);
+      let resource = window.mlWorld[0].createModelResource(data);
 
       /**
        * Add kmat to resource.
@@ -1302,28 +1325,64 @@
   };
 
   /**
-   * Add mlextraction event listener to the HTML custom element to handle extraction.
+   * Add mlextraction and mouselongpress event listeners to the HTML custom element to handle extraction.
    * @param {HTMLElement} el HTML custom element.
    */
   let setNodeExtraction = (el) => {
     if (el) {
+      /**
+       * event listener for mlextraction is legacy code. This is because mlextraction is received only at volume level and that event is re-dispatched as a mouselongpress event.
+       */
       el.addEventListener('mlextraction', handleExtraction, false);
+      el.addEventListener('mouselongpress', handleExtraction, false);
+
+      /**
+       * set the element as draggable and add an event listener.
+       */
+      el.draggable = 'true';
+      el.addEventListener('dragstart', handleDragEvent, false);
     }
   };
 
   /**
-   * Remove mlextraction event listener from the node.
+   * Remove mlextraction and mouselongpress event listeners from the node.
    * @param {HTMLElement} el HTML custom element.
    */
   let unsetNodeExtraction = (el) => {
     if (el) {
+      /**
+       * event listener for mlextraction is legacy code. This is because mlextraction is received only at volume level and that event is re-dispatched as a mouselongpress event.
+       */
       el.removeEventListener('mlextraction', handleExtraction, false);
+      el.removeEventListener('mouselongpress', handleExtraction, false);
+
+      /**
+       * Disable draggable and remove the event handler.
+       * TODO(ashwin): Do we need to disable draggable? can we leave ml model as always draggable like images?
+       */
+      el.draggable = 'false';
+      el.removeEventListener('dragstart', handleDragEvent, false);
     }
   };
 
   /**
    * Node extraction handler.
-   * @param {HTMLElement} el HTML custom element.
+   * @param {Event} e Event.
+   */
+  let handleDragEvent = (e) => {
+    /**
+     * extract the element.
+     */
+    handleExtraction(e);
+    /**
+     * Prevent the default action to avoid triggering unintended code
+     */
+    e.preventDefault();
+  };
+
+  /**
+   * Node extraction handler.
+   * @param {Event} e Event.
    */
   let handleExtraction = (e) => {
     /**
@@ -1334,7 +1393,7 @@
       /**
        * Consume click event dispatched by API after long press.
        */
-      window.addEventListener('click',  e => e.stopPropagation(), { once: true, capture: true });
+      window.addEventListener('click', e => e.stopPropagation(), { once: true, capture: true });
     }
 
     /**
@@ -1485,7 +1544,7 @@
       /**
        * Create Matrix with position for the extracted node.
        */
-      let transformMatrix = new DOMMatrix().translate(aniTransformPositionX + mainTransformPositionX + (window.mlWorld.stageExtent.right - window.mlWorld.stageExtent.left)/2, aniTransformPositionY + mainTransformPositionY + (window.mlWorld.viewportHeight/2 + window.mlWorld.viewPortPositionTopLeft.y) + (window.mlWorld.stageExtent.top - window.mlWorld.stageExtent.bottom)/2, newPositionZ + (window.mlWorld.stageExtent.front - window.mlWorld.stageExtent.back)/2);
+      let transformMatrix = new DOMMatrix().translate(aniTransformPositionX + mainTransformPositionX + (window.mlWorld.stageExtent.right - window.mlWorld.stageExtent.left) / 2, aniTransformPositionY + mainTransformPositionY + (window.mlWorld.viewportHeight / 2 + window.mlWorld.viewPortPositionTopLeft.y) + (window.mlWorld.stageExtent.top - window.mlWorld.stageExtent.bottom) / 2, newPositionZ + (window.mlWorld.stageExtent.front - window.mlWorld.stageExtent.back) / 2);
 
       /**
        * Use calculatedScale, otherwise use extracted-scale attribute.
@@ -1512,7 +1571,7 @@
        * Call extractContent on main transform.
        * Provide Matrix, size of the node to be extracted and extraction scale.
        */
-      doExtraction(el, transformMatrix, {width:eWidth, height:eHeight, breadth: eBreadth}, extractedScale);
+      doExtraction(el, transformMatrix, { width: eWidth, height: eHeight, breadth: eBreadth }, extractedScale);
 
       /**
        * Resize node back to original in main Transform.
@@ -1594,22 +1653,22 @@
      * Make the volume size twice as big.
      */
     if (el.hasAttribute('model-animation')) {
-      eSize.width   *=  2;
-      eSize.height  *=  2;
-      eSize.breadth *=  2;
+      eSize.width *= 2;
+      eSize.height *= 2;
+      eSize.breadth *= 2;
     }
 
     /**
      * Extract content with dictionary manifest
      */
     let extractionOptions = {
-        scale: extractedScale,
-        transform: transformMatrix,
-        doIt: "auto",
-        origin_url: path,
-        width: eSize.width + VOLUME_GAP,
-        height: eSize.height + VOLUME_GAP,
-        breadth: eSize.breadth + VOLUME_GAP
+      scale: extractedScale,
+      transform: transformMatrix,
+      doIt: 'auto',
+      origin_url: path,
+      width: eSize.width + VOLUME_GAP,
+      height: eSize.height + VOLUME_GAP,
+      breadth: eSize.breadth + VOLUME_GAP
     };
 
     /**
@@ -1683,7 +1742,7 @@
     /**
      * Get the volume.
      */
-    let volume = mlWorld[0];
+    let volume = window.mlWorld[0];
 
     /**
      * Handle mouseover if volume and node is visible and last hover event was not a mouseover.
@@ -1759,7 +1818,7 @@
     /**
      * Get the volume.
      */
-    let volume = mlWorld[0];
+    let volume = window.mlWorld[0];
 
     /**
      * Handle mouseover event if node and last hover event event was not a mouseout.
@@ -1825,17 +1884,16 @@
       width = elSize.width;
       height = elSize.height;
       breadth = elSize.breadth;
-
     }
     /**
      * DOM extraction. Get the initial size
      */
-    else if ( el.hasAttribute('extracted-src')) {
+    else if (el.hasAttribute('extracted-src')) {
       /**
        * Get the initial size by calculating 15 percent of the browser's dimensions.
        */
-      width = (mlWorld.viewportWidth / 100 ) * 15 ;
-      height = (mlWorld.viewportHeight / 100 ) * 15 ;
+      width = (window.mlWorld.viewportWidth / 100 ) * 15 ;
+      height = (window.mlWorld.viewportHeight / 100 ) * 15 ;
       breadth = Math.max(width, height);
     }
 
@@ -1852,59 +1910,47 @@
    */
   let setNodeSize = (el) => {
     /**
-     * Get node. Either model or quad.
+     * Get the size of HTML custom element.
      */
-    let node = (el._model ? el._model : el._quad);
+    let { width, height, breadth } = getNodeSize(el);
 
-    if (node) {
+    /**
+     * Throw error if any of the node's dimensions has not been specified.
+     */
+    if (width === 0 || height === 0 || breadth === 0) {
+      console.error(`At least one of the node\'s dimension is not specified. With and Height dimensions are specified using CSS width/height properties, and breadth dimension is specified using breadth attribute. ${el.id}.`);
+    }
+    else {
       /**
-       * Get the size of HTML custom element.
+       * Model.
        */
-      let { width, height, breadth } = getNodeSize(el);
-
-      /**
-       * Throw error if any of the node's dimensions has not been specified.
-       */
-      if (width === 0 || height === 0 || breadth === 0) {
-        console.error(`At least one of the node\'s dimension is not specified. With and Height dimensions are specified using CSS width/height properties, and breadth dimension is specified using breadth attribute. ${el.id}.`);
-      }
-      else {
-        /**
-         * Model.
-         */
-        if (el._model) {
+      if (el._model) {
+        if (el.hasAttribute("fill") && (el.getAttribute('fill') === '' || el.getAttribute('fill') === 'true')) {
+          el._model.setLocalScale(new Float32Array([width / el._resource.width, height / el._resource.height, breadth / el._resource.depth]));
+        }
+        /* Uniformly scale */
+        else {
           /**
-           * Set Anchor position.
+           * User didn't specifed breadth: Do scale based on width and height
            */
-          el._model.setAnchorPosition(new Float32Array([el._resource.center.x, el._resource.center.y, el._resource.center.z]));
-
-          if (el.hasAttribute("fill") && (el.getAttribute('fill') === '' || el.getAttribute('fill') === 'true')) {
-            el._model.setLocalScale(new Float32Array([width / el._resource.width, height / el._resource.height, breadth / el._resource.depth]));
+          let scaleRatio;
+          if (!el.breadth) {
+            scaleRatio = Math.min(width / el._resource.width, height / el._resource.height);
           }
-          /* Uniformly scale */
           else {
-            /**
-             * User didn't specifed breadth: Do scale based on width and height
-             */
-            let scaleRatio;
-            if (!el.breadth) {
-              scaleRatio = Math.min(width / el._resource.width, height / el._resource.height);
-            }
-            else {
-              scaleRatio = Math.min(width / el._resource.width, height / el._resource.height, breadth / el._resource.depth);
-            }
-
-            /* Set local scale on the model. */
-            el._model.setLocalScale(new Float32Array([scaleRatio, scaleRatio, scaleRatio]));
+            scaleRatio = Math.min(width / el._resource.width, height / el._resource.height, breadth / el._resource.depth);
           }
+
+          /* Set local scale on the model. */
+          el._model.setLocalScale(new Float32Array([scaleRatio, scaleRatio, scaleRatio]));
         }
-        /**
-         * Quad.
-         */
-        else if (el._quad) {
-          el._quad.setLocalScale(new Float32Array([width, height, 0]));
-          el._quad.setLocalPosition(new Float32Array([-(width / 2), -(height / 2), 0]));
-        }
+      }
+      /**
+       * Quad.
+       */
+      else if (el._quad) {
+        el._quad.setLocalScale(new Float32Array([width, height, 0]));
+        el._quad.setLocalPosition(new Float32Array([-(width / 2), -(height / 2), 0]));
       }
     }
   };
@@ -1980,7 +2026,7 @@
     /**
      * Get the volume.
      */
-    let volume = mlWorld[0];
+    let volume = window.mlWorld[0];
 
     /**
      * Get the model.
@@ -2163,11 +2209,10 @@
    * @param {JSONObject} resources Created by loadResource and contains model resource and shader type.
    */
   let createModel = (el, resources) => {
-
     /**
      * Get the volume.
      */
-    let volume = mlWorld[0];
+    let volume = window.mlWorld[0];
 
     /**
      * Create Model.
@@ -2265,6 +2310,11 @@
     }
 
     /**
+     * Set Anchor position.
+     */
+    el._model.setAnchorPosition(new Float32Array([el._resource.center.x, el._resource.center.y, el._resource.center.z]));
+
+    /**
      * Set model size.
      * Set model anchor position to center.
      */
@@ -2323,7 +2373,7 @@
     /**
      * Get the volume.
      */
-    let volume = mlWorld[0];
+    let volume = window.mlWorld[0];
 
     /**
      * Materials attribute has kmat and textures.
@@ -2362,7 +2412,7 @@
      */
     let resources = await loadResource(el, src);
 
-    return createModel(el, resources);
+    await createModel(el, resources);
    };
 
   /**
@@ -2375,6 +2425,10 @@
      * Get resources from elInsitance to create model.
      */
     let resources = {resource: elInstance._resource, shader: elInstance._model.shader};
+
+    /**
+     * Create Model with the instance resources.
+     */
     createModel(el, resources);
   };
 
@@ -2474,7 +2528,9 @@
           /**
            * Update size and possition
            */
-          setNodeSize(resize.target);
+          if (resize.target._model || resize.target._quad) {
+            setNodeSize(resize.target);
+          }
         });
       });
 
@@ -2567,7 +2623,7 @@
       }
 
       el._mainTransform.removeChild(el._transform);
-      mlWorld[0].removeChild(el._mainTransform);
+      window.mlWorld[0].removeChild(el._mainTransform);
 
       /**
        * Delete attached properties
@@ -2580,6 +2636,8 @@
       delete el._textures;
       delete el._kmat;
       delete el._texture;
+      delete el._connected;
+      delete el._rendering;
     }
   };
 
@@ -2833,6 +2891,11 @@
       }
 
       /**
+       * Add connected flag to check element is inserted into the DOM.
+       */
+      this._connected = true;
+
+      /**
        * When CSS display is not specified, set CSS display to inline-block.
        */
       if (!this.style.display) {
@@ -2842,7 +2905,7 @@
       /**
        * If node has extractable flag, set hover and extract.
        */
-      if (this.extractable) {
+      if (this.extractable && this.extractable !== 'false') {
         /**
          * Set hover mouseover effect.
          */
@@ -2860,11 +2923,6 @@
       setMutationObserver(this);
 
       /**
-       * Observe custom element for changes in size.
-       */
-      setResizeObserver(this);
-
-      /**
        * Listen when browser window is resized.
        * Re-position node.
        */
@@ -2880,18 +2938,63 @@
        * Models are scrollable by default.
        */
       setScrollable(this);
+
+      /**
+       * Observe custom element for changes in size.
+       */
+      setResizeObserver(this);
+
+      /**
+       * Render model.
+       */
+      if (!this._rendering) {
+        this.render();
+      }
     } //end of connectedCallback
 
     /**
      * Render node.
      */
     render() {
-      if (this.src && window.mlWorld) {
+      /**
+       * Exit if no mlWorld.
+       */
+      if (!window.mlWorld) {
+        return;
+      }
+      /**
+       * Render instance model.
+       */
+      if (this.instance) {
+        /**
+         * Find element instantiating from.
+         */
+        let elInstance = document.getElementById(this.getAttribute('instance'));
+        /**
+         * Check if valid instantiating element and its model has rendered.
+         */
+        if (elInstance && elInstance._model) {
+          /**
+           * Render instance of node.
+           */
+          doModelInstance(this, elInstance);
+          /**
+           * Instance visibility.
+           */
+          if (this._model) {
+            this._model.visible = isElementVisible(this) && !(this.getAttribute('visibility') === 'hidden');
+          }
+        }
+      }
+      /**
+       * Render normal model.
+       */
+      else if (this.src) {
         /**
          * Check for Volume.
          * If no Volume, reset stage and create bounded volume.
          */
-        if (mlWorld.length === 0) {
+        if (window.mlWorld.length === 0) {
           /**
            * Reset stage.
            */
@@ -2902,6 +3005,11 @@
            */
           createVolume(this);
         }
+        /**
+         * Start rendering.
+         * Set rendering flag to true.
+         */
+        this._rendering = true;
 
         /* Render. */
         doModelRendering(this).then(() => {
@@ -2933,10 +3041,16 @@
           this.dispatchEvent(new ErrorEvent("error",{error: err, message: err.message || "Problem rendering node", bubbles: true}));
           /* Show error. */
           console.error(`Problem rendering: ${err}`);
+        }).finally(() => {
+          /**
+           * End rendering.
+           * Set rendering flag to false.
+           */
+          this._rendering = false;
         });
       }
-    }
-    
+    }//end render
+
     /**
      * A method of the HTML element.
      */
@@ -2970,6 +3084,7 @@
               'move-to',
               'move-by',
               'src',
+              'instance',
               'z-offset',
               'environment-lighting'
             ];
@@ -2980,15 +3095,16 @@
      */
     attributeChangedCallback(name, oldValue, newValue) {
       /**
-       * Attribute src changed: render node.
+       * Attribute src or instance changed:
+       *  Render node if element is in DOM and not rendering.
        */
-      if (name === 'src') {
+      if (this._connected && !this._rendering && (name === 'src' || name === 'instance')) {
         this.render();
       }
       /**
-       * If any attribute change and there is a volume, Set attribute.
+       * If any attribute change and there is a model, Set attribute.
        */
-      else if (window.mlWorld && mlWorld[0] && this._model) {
+      else if (this._model) {
         setModelAttributes(this, {[name] : newValue});
       }
     }
@@ -3268,6 +3384,17 @@
     }
 
     /**
+     * instance: Element's Property.
+     */
+    get instance() {
+      return this.getAttribute('instance');
+    }
+    set instance(v) {
+      if (this.getAttribute('instance') === v.toString()) return;
+      this.setAttribute('instance', v);
+    }
+
+    /**
      * zOffset: Element's Property.
      */
     get zOffset() {
@@ -3368,7 +3495,7 @@
         /**
          * Create texture from JS Volume.
          */
-        let texture = mlWorld[0].createTexture(img);
+        let texture = window.mlWorld[0].createTexture(img);
 
         /**
          * Check texture.
@@ -3398,7 +3525,7 @@
     /**
      * Get the volume.
      */
-    let volume = mlWorld[0];
+    let volume = window.mlWorld[0];
 
     /**
      * Get the quad.
@@ -3580,7 +3707,7 @@
     /**
      * Get the volume.
      */
-    let volume = mlWorld[0];
+    let volume = window.mlWorld[0];
 
     /**
      * Create Quad.
@@ -3777,6 +3904,11 @@
       }
 
       /**
+       * Add connected flag to check element is inserted into the DOM.
+       */
+      this._connected = true;
+
+      /**
        * When CSS display is not specified, set CSS display to inline-block.
        */
       if (!this.style.display) {
@@ -3786,7 +3918,7 @@
       /**
        * If node has extractable flag, set hover and extract.
        */
-      if (this.extractable) {
+      if (this.extractable && this.extractable !== 'false') {
         /**
          * Set hover mouseover effect.
          */
@@ -3804,11 +3936,6 @@
       setMutationObserver(this);
 
       /**
-       * Observe custom element for changes in size.
-       */
-      setResizeObserver(this);
-
-      /**
        * Listen when browser window is resized.
        * Re-position node.
        */
@@ -3824,18 +3951,64 @@
        * Models are scrollable by default.
        */
       setScrollable(this);
+
+      /**
+       * Observe custom element for changes in size.
+       */
+      setResizeObserver(this);
+
+      /**
+       * Render model.
+       */
+      if (!this._rendering) {
+        this.render();
+      }
     } //end of connectedCallback
 
     /**
      * Render node.
      */
     render() {
-      if (this.src && window.mlWorld) {
+      /**
+       * Exit if no mlWorld.
+       */
+      if (!window.mlWorld) {
+        return;
+      }
+
+      /**
+       * Render instance model.
+       */
+      if (this.instance) {
+        /**
+         * Find element instantiating from.
+         */
+        let elInstance = document.getElementById(this.getAttribute('instance'));
+        /**
+         * Check if valid instantiating element and its model has rendered.
+         */
+        if (elInstance && elInstance._quad) {
+          /**
+           * Render instance of node.
+           */
+          doQuadInstance(this, elInstance);
+          /**
+           * Instance visibility.
+           */
+          if (this._quad) {
+            this._quad.visible = isElementVisible(this) && !(this.getAttribute('visibility') === 'hidden');
+          }
+        }
+      }
+      /**
+       * Render normal quad.
+       */
+      else if (this.src) {
         /**
          * Check for Volume.
          * If no Volume, reset stage and create bounded volume.
          */
-        if (mlWorld.length === 0) {
+        if (window.mlWorld.length === 0) {
           /**
            * Reset stage.
            */
@@ -3846,6 +4019,12 @@
            */
           createVolume(this);
         }
+
+        /**
+         * Start rendering.
+         * Set rendering flag to true.
+         */
+        this._rendering = true;
 
         /* Render. */
         doQuadRendering(this).then(() => {
@@ -3878,6 +4057,12 @@
           this.dispatchEvent(new ErrorEvent("error",{error: err, message: err.message || "Problem rendering node", bubbles: true}));
           /* Show error. */
           console.error(`Problem rendering: ${err}`);
+        }).finally(() => {
+          /**
+           * End rendering.
+           * Set rendering flag to false.
+           */
+          this._rendering = false;
         });
       }
     }
@@ -3912,6 +4097,7 @@
               'move-to',
               'move-by',
               'src',
+              'instance',
               'z-offset'
             ];
     }
@@ -3921,16 +4107,17 @@
      */
     attributeChangedCallback(name, oldValue, newValue) {
       /**
-       * Attribute src changed: render node.
+       * Attribute src or instance changed:
+       *  Render node if element is in DOM and not rendering.
        */
-      if (name === 'src') {
+      if (this._connected && !this._rendering && (name === 'src' || name === 'instance')) {
         this.render();
       }
       /**
-       * If any attribute change and there is a volume, Set attribute.
+       * If any attribute change and there is a quad, Set attribute.
        */
-      else if (window.mlWorld && mlWorld[0] && this._quad) {
-       setQuadAttributes(this, {[name] : newValue});
+      else if (this._quad) {
+        setQuadAttributes(this, {[name] : newValue});
       }
     }
 
@@ -4164,6 +4351,16 @@
     }
 
     /**
+     * instance: Element's Property.
+     */
+    get instance() {
+      return this.getAttribute('instance');
+    }
+    set instance(v) {
+      if (this.getAttribute('instance') === v.toString()) return;
+      this.setAttribute('instance', v);
+    }
+    /**
      * zOffset: Element's Property.
      */
     get zOffset() {
@@ -4219,11 +4416,11 @@
    * Set new position, size and rotation of JS volume.
    */
   let mainStageChangedListener = () => {
-    if (mlWorld.length > 0) {
+    if (window.mlWorld.length > 0) {
       /**
        * Get the volume.
        */
-      let volume = mlWorld[0];
+      let volume = window.mlWorld[0];
 
       /**
        * Set new position and rotation of JS volume.
@@ -4253,65 +4450,76 @@
     }
   };
 
-  let handleDomExtraction = (event) => {
-    if (event.button !== 6) {
-      return;
-    }
+  let DomExtractionEnabled = (el) => {
+    /**
+     * Return if extracted-src or extractable attributes are not preset.
+     */
+    let should_skip_dom_extraction = (el.tagName === 'ML-MODEL'
+     || el.tagName === 'ML-QUAD'
+     || !el.hasAttribute('extracted-src')
+     || !el.hasAttribute('extractable')
+     || (el.getAttribute('extractable') !== '' && el.getAttribute('extractable') !== 'true'));
 
+    return !should_skip_dom_extraction;
+  };
+
+  let handleDomExtraction = (event) => {
     /**
      * Assign element.
      */
     let el = event.target;
 
+    if (!DomExtractionEnabled(el)) return;
+
     /**
-     * Check extracted-src and extractable attributes are preset.
+     * Skip all other extractions.
      */
-    if (el.tagName !== 'ML-MODEL' && el.tagName !== 'ML-QUAD' && el.hasAttribute('extracted-src') && el.hasAttribute('extractable') && (el.getAttribute('extractable') === '' || el.getAttribute('extractable') === 'true')) {
-      /**
-       * Skip all other extractions.
-       */
-      event.preventDefault();
+    event.preventDefault();
 
+    /**
+     * Check for Volume.
+     * If no volume, reset stage and create volume.
+     */
+    if (window.mlWorld.length === 0) {
       /**
-       * Check for Volume.
-       * If no volume, reset stage and create volume.
+       * Reset stage.
        */
-      if (mlWorld.length === 0) {
-        /**
-         * Reset stage.
-         */
-        window.mlWorld.resetStageExtent();
-
-        /**
-         * Create volume.
-         */
-        createVolume(el);
-      }
+      window.mlWorld.resetStageExtent();
 
       /**
-       * Render model.
+       * Create volume.
        */
-      doModelRendering(el, el.getAttribute('extracted-src')).then(() => {
-        /**
-         * Don't show model.
-         */
-        el._model.visible = false;
+      createVolume(el);
+    }
 
-        /**
-         * Do the extraction of the model.
-         */
-        handleExtraction(event);
+    /**
+     * Render model.
+     */
+    doModelRendering(el, el.getAttribute('extracted-src')).then(() => {
+      /**
+       * Don't show model.
+       */
+      el._model.visible = false;
 
-        /**
-         * Delete model.
-         */
-        deleteNode(el);
+      /**
+       * Do the extraction of the model.
+       */
+      handleExtraction(event);
 
-      }).catch((err) => {
-        /* Show error. */
-        console.error(`Problem extracting node: ${err}`);
-      });
-    }
+      /**
+       * Delete model.
+       */
+      deleteNode(el);
+    }).catch((err) => {
+      /* Show error. */
+      console.error(`Problem extracting node: ${err}`);
+    });
+  };
+
+  let cancelDragOperationIfDomExtractionEnabled = (event) => {
+    if (DomExtractionEnabled(event.target)) {
+      event.preventDefault();
+    }
   };
 
   /*!
@@ -4330,18 +4538,34 @@
     document.addEventListener('mlstage', mainStageChangedListener);
 
     /**
-     * Listen for mousedown event to handle DOM extraction on longpress.
+     * Listen for mousedown event to handle DOM extraction on longpress. This path has been deprecated since introduction of mouselongpress event.
      */
-    document.addEventListener('mousedown', handleDomExtraction, true);
+    document.addEventListener('mousedown', (event) => {
+      /**
+       * Check for longpress (event.button === 6) when mousedown event.
+       */
+      if (event.button !== 6) {
+        return;
+      }
+      handleDomExtraction(event);
+    }, true);
+
+    /**
+     * Listen for mouselongpress event to handle DOM extraction on longpress.
+     */
+    document.addEventListener('mouselongpress', handleDomExtraction, true);
+
+    /**
+     * Listen for dragstart event to prevent DOM extraction on nodes with extractable content.
+     */
+    document.addEventListener('dragstart', cancelDragOperationIfDomExtractionEnabled, true);
 
     /**
      * Animate at 60FPS by calling mlWorld.update();
      */
-    setInterval (() => window.mlWorld.update(), 16);
-
-  }
-  else {
-    console.warn("Unable to render content: No mixed-reality browser detected.");
+    setInterval(() => window.mlWorld.update(), 16);
+  } else {
+    console.warn('Unable to render content: No mixed-reality browser detected.');
   }
 
   exports.MlModel = MlModel;

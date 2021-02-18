@@ -69,7 +69,7 @@ export class MlStage extends HTMLElement {
     /**
      * Copy current extent values.
      */
-    let stageExtents = {top:mlWorld.stageExtent.top, right:mlWorld.stageExtent.right, bottom:mlWorld.stageExtent.bottom, left:mlWorld.stageExtent.left, front:mlWorld.stageExtent.front, back:mlWorld.stageExtent.back};
+    let stageExtents = {top:window.mlWorld.stageExtent.top, right:window.mlWorld.stageExtent.right, bottom:window.mlWorld.stageExtent.bottom, left:mlWorld.stageExtent.left, front:mlWorld.stageExtent.front, back:mlWorld.stageExtent.back};
 
     let extentValueArr = this.getAttribute('extents').toLowerCase().split(/;/);
 
@@ -108,8 +108,8 @@ export class MlStage extends HTMLElement {
     /**
      * Hide volume during volume re-size and re-position of the volume in mainStageChangedListener and re-position of nodes in setStageChangeListener.
      */
-    mlWorld[0].visible = false;
-    mlWorld.update();
+    window.mlWorld[0].visible = false;
+    window.mlWorld.update();
 
     /**
      * Prepare MLStageExtent with extents values.
@@ -140,7 +140,7 @@ export class MlStage extends HTMLElement {
       /**
        * Show volume when setStageExtent is finished.
        */
-      mlWorld[0].visible = true;
+      window.mlWorld[0].visible = true;
     });
   }
 

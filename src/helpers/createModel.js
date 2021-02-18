@@ -8,11 +8,10 @@ import { setNodePosition as setModelPosition } from '../helpers/setNodePosition.
  * @param {JSONObject} resources Created by loadResource and contains model resource and shader type.
  */
 let createModel = (el, resources) => {
-
   /**
    * Get the volume.
    */
-  let volume = mlWorld[0];
+  let volume = window.mlWorld[0];
 
   /**
    * Create Model.
@@ -108,6 +107,11 @@ let createModel = (el, resources) => {
     el._model.textures = el._textures;
     el._model.kmat = el._kmat;
   }
+
+  /**
+   * Set Anchor position.
+   */
+  el._model.setAnchorPosition(new Float32Array([el._resource.center.x, el._resource.center.y, el._resource.center.z]));
 
   /**
    * Set model size.

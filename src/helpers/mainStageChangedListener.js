@@ -3,11 +3,11 @@
  * Set new position, size and rotation of JS volume.
  */
 let mainStageChangedListener = () => {
-  if (mlWorld.length > 0) {
+  if (window.mlWorld.length > 0) {
     /**
      * Get the volume.
      */
-    let volume = mlWorld[0];
+    let volume = window.mlWorld[0];
 
     /**
      * Set new position and rotation of JS volume.

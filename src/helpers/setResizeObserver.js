@@ -12,7 +12,9 @@ let setResizeObserver = (el) => {
         /**
          * Update size and possition
          */
-        setNodeSize(resize.target);
+        if (resize.target._model || resize.target._quad) {
+          setNodeSize(resize.target);
+        }
       });
     });
 

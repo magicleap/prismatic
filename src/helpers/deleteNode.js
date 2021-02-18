@@ -12,7 +12,7 @@ let deleteNode = (el) => {
     }
 
     el._mainTransform.removeChild(el._transform);
-    mlWorld[0].removeChild(el._mainTransform)
+    window.mlWorld[0].removeChild(el._mainTransform)
 
     /**
      * Delete attached properties
@@ -25,6 +25,8 @@ let deleteNode = (el) => {
     delete el._textures;
     delete el._kmat;
     delete el._texture;
+    delete el._connected;
+    delete el._rendering;
   }
 };
 
